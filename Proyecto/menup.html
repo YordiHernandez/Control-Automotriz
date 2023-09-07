@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú - El Tridente Taller Automotriz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            align-items: center;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: #fff;
+            height: 100%;
+            position: fixed;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            text-align: center;
+            margin-bottom: 10px; 
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 20px; 
+            font-weight: bold;
+            padding: 15px 20px; 
+            display: block; 
+        }
+
+        .sidebar ul li:hover {
+            background-color: #444;
+        }
+
+        .content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">Menú</div>
+        <ul>
+            <li><a href="#">Ingresar Vehículo</a></li>
+            <li><a href="#">Cotizar Servicios</a></li>
+            <li><a href="#">Historial del Servicio</a></li>
+            <li><a href="#">Bitácora</a></li>
+            <li><a href="login.html">LogOut</a></li>
+        </ul>
+    </div>
+    <div class="content">
+
+    </div>
+</body>
+</html>

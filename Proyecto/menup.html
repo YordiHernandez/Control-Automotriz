@@ -24,7 +24,13 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            justify-content: center; 
+            justify-content: center;
+            transform: translateX(-250px); /* Oculta el menú inicialmente */
+            transition: transform 0.3s ease-in-out; /* Agrega una transición suave */
+        }
+
+        .sidebar.active {
+            transform: translateX(0); /* Muestra el menú cuando está activo */
         }
 
         .sidebar ul {
@@ -35,16 +41,16 @@
 
         .sidebar ul li {
             text-align: center;
-            margin-bottom: 10px; 
+            margin-bottom: 10px;
         }
 
         .sidebar ul li a {
             text-decoration: none;
             color: #fff;
-            font-size: 20px; 
+            font-size: 20px;
             font-weight: bold;
-            padding: 15px 20px; 
-            display: block; 
+            padding: 15px 20px;
+            display: block;
         }
 
         .sidebar ul li:hover {
@@ -52,7 +58,7 @@
         }
 
         .content {
-            margin-left: 250px;
+            margin-left: 0; /* Ajusta el margen cuando el menú está activo */
             flex: 1;
             padding: 20px;
         }
@@ -62,12 +68,29 @@
             font-weight: bold;
             text-align: center;
             padding: 20px;
+            cursor: pointer; /* Agrega un cursor de puntero */
+        }
+
+        /* Botón de menú */
+        .menu-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            padding: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo">Menú</div>
+    <div class="menu-button" onclick="toggleMenu()">☰</div>
+    <div class="sidebar" id="sidebar">
+        <div class="logo" onclick="toggleMenu()">Menú</div>
         <ul>
             <li><a href="ingreso.html">Ingresar Vehículo</a></li>
             <li><a href="#">Cotizar Servicios</a></li>
@@ -77,7 +100,14 @@
         </ul>
     </div>
     <div class="content">
-
+        <!-- Contenido de la página principal -->
     </div>
+
+    <script>
+        function toggleMenu() {
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+        }
+    </script>
 </body>
 </html>

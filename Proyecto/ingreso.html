@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vista con Botones y Modal</title>
+  <style>
+     /* Estilos CSS anteriores */
+
+    /* Estilos para el modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      width: 80%;
+      max-width: 600px;
+      margin: 100px auto;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Estilos para el formulario dentro del modal */
+    .modal-form label {
+      display: block;
+      margin-bottom: 5px;
+
+    }
+    .title{
+      background-color: #007bff;
+      border-radius: 5px;
+      max-width: 60%;
+      padding: 10px;
+      color: #fff;
+
+    }
+    .container-title-and-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .title {
+      font-size: 36px;
+      font-weight: Arial;
+    }
+
+    .btn {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      cursor: pointer;
+      background-color: #007bff;
+      color: #fff;
+      border-radius: 5px;
+    }
+
+    .modal-form input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-family: Arial, sans-serif; /* Fuente Arial */
+      text-align: center; /* Centrar texto */
+    }
+
+    .modal-form button {
+      font-family: Arial, sans-serif; /* Fuente Arial */
+      font-size: 16px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    .modal-form button:hover {
+      background-color: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      border-radius: 5px; /* Estilo redondeado */
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+      text-align: center; /* Centrar texto */
+    }
+
+    th {
+      background-color: #007bff; /* Color de encabezado diferente */
+      color: #fff;
+      font-weight: bold; /* Texto en negrita */
+    }
+
+    th, td {
+      padding: 8px;
+      font-family: Arial, sans-serif; /* Fuente Arial */
+    }
+
+    /* Estilos para las filas impares de la tabla */
+    tr:nth-child(odd) {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-title-and-buttons">
+    <div class="title">Ingresar Vehículo</div>
+    <div>
+      <button class="btn" onclick="openModal()">Agregar</button>
+      <button class="btn">Editar</button>
+      <button class="btn">Eliminar</button>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Formulario de Registro de Vehículo</h2>
+      <form class="modal-form">
+        <label for="marca">Marca Vehiculo:</label>
+        <input type="text" id="marca" name="marca" required>
+
+        <label for="tipo">Tipo:</label>
+        <input type="text" id="tipo" name="tipo" required>
+
+        <label for="modelo">Modelo:</label>
+        <input type="text" id="modelo" name="modelo" required>
+
+        <label for="placa">Placa:</label>
+        <input type="text" id="placa" name="placa" required>
+
+        <label for="color">Color:</label>
+        <input type="text" id="color" name="color" required>
+
+        <label for="kilometraje">Kilometraje:</label>
+        <input type="number" id="kilometraje" name="kilometraje" required>
+
+        <label for="cliente">Número de cliente:</label>
+        <input type="text" id="cliente" name="cliente" required>
+
+        <button type="submit">Guardar</button>
+      </form>
+    </div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Marca Vehiculo</th>
+        <th>Tipo</th>
+        <th>Modelo</th>
+        <th>Placa</th>
+        <th>Color</th>
+        <th>Kilometraje</th>
+        <th>Número de cliente</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Fila de datos quemada (puedes agregar más filas como esta) -->
+      <tr>
+        <td>Toyota</td>
+        <td>Sedán</td>
+        <td>Camry</td>
+        <td>ABC123</td>
+        <td>Rojo</td>
+        <td>50000</td>
+        <td>123456</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    // Función para abrir el modal
+    function openModal() {
+      var modal = document.getElementById("myModal");
+      modal.style.display = "block";
+    }
+
+    // Función para cerrar el modal
+    function closeModal() {
+      var modal = document.getElementById("myModal");
+      modal.style.display = "none";
+    }
+
+    // Cierra el modal si el usuario hace clic fuera de él
+    window.onclick = function(event) {
+      var modal = document.getElementById("myModal");
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>

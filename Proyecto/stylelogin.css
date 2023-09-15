@@ -1,0 +1,81 @@
+body {
+  font-family: Arial, sans-serif;
+  background-image: url("./images/fondo.jpg");
+  height: 100vh;
+  width: 100%;
+  background-position: center;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.container {
+  background-color: #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 400px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+#regre{
+  position: absolute; /* Colocar la imagen en posición absoluta */
+  top: 30px; /* Cambiar esto según la posición vertical deseada en píxeles */
+  left: 50px; /* Cambiar esto según la posición horizontal deseada en píxeles */
+  width: 80px; /* Cambiar esto para establecer el ancho deseado en píxeles */
+  height: 80px;
+}
+
+input[type="text"], input[type="password"] {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+a.button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 15px;
+  width: 90%;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  display: block;
+  margin-bottom: 15px;
+  margin-top: 15px;
+}
+
+a.button:hover {
+  background-color: #0056b3;
+}
+
+.close-button {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 50px;
+  cursor: pointer;
+  color: #ffffff;
+  text-decoration: none; 
+}

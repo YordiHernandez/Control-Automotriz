@@ -1,0 +1,45 @@
+<%- include ('partials/_header') -%>
+
+<div class="container" >
+    <div class="row mt-5">
+        <div class="col-md-7">
+
+        </div>
+        <div class="col-md-5">
+            <div class="card bg-light ">
+                <div class="card-body">
+                    <div class="card-header">Ingresar Vehiculo</div>
+                    <form action="/add" method="post" style="padding: 5px;">
+                        <div class="form-group">
+                            <input type="text" name="marca" placeholder="Inserte marca" class="form-control" style="margin-bottom: 5px;"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="tipo" placeholder="Inserte tipo" class="form-control" style="margin-bottom: 5px;"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="modelo" placeholder="Inserte modelo" class="form-control" style="margin-bottom: 5px;"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="placa" placeholder="Inserte numero placa" class="form-control" style="margin-bottom: 5px;" />
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="color" placeholder="Inserte color" class="form-control" style="margin-bottom: 5px;" />
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="kilometraje" placeholder="Inserte kilometraje" class="form-control" style="margin-bottom: 5px;" />
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="cliente" placeholder="cliente" class="form-control" style="margin-bottom: 5px;" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 5px;">
+                            Guardar Vehiculo
+                        </button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include ('partials/_footer') -%>
+

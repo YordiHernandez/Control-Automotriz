@@ -3,7 +3,42 @@
 <div class="container" >
     <div class="row mt-5">
         <div class="col-md-7">
-
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>N.</th>
+                        <th>Marca</th>
+                        <th>Tipo</th>
+                        <th>Modelo</th>
+                        <th>Placa</th>
+                        <th>Color</th>
+                        <th>Kilometraje</th>
+                        <th>Cliente</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <% if (data) { %>
+                    <% for (var i = 0; i < data.length; i++) { %>
+                        <tr>
+                            <td><%= (i + 1)%></td>
+                            <td style="display: none;"><%= (data[i].pk_Id_Vehiculo) %></td>
+                            <td><%= (data[i].Marca_Vehiculo) %></td>
+                            <td><%= (data[i].Tipo_Vehiculo) %></td>
+                            <td><%= (data[i].Modelo_Vehiculo) %></td>
+                            <td><%= (data[i].Placa_Vehiculo) %></td>
+                            <td><%= (data[i].Color_Vehiculo) %></td>
+                            <td><%= (data[i].Kilometraje_Vehiculo) %></td>
+                            <td><%= (data[i].fk_Id_Cliente_V) %></td>
+                            <td>
+                                <a href="/delete/<%= data[i].pk_Id_Vehiculo %>" class="btn btn-danger">Borrar</a>
+                                <a href="/update/<%= data[i].pk_Id_Vehiculo %>" class="btn btn-info">Modificar</a>
+                            </td>
+                        </tr>
+                <% } %>
+                <% } %>
+                </tbody>
+            </table>
         </div>
         <div class="col-md-5">
             <div class="card bg-light ">

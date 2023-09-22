@@ -6,7 +6,7 @@ const mysql2 = require('mysql2')
 const myConnection = require('express-myconnection')
 
 //exportando rutas
-const vehiculoRoute = require('./routes/VehiculoRoute')
+const automotrizRutas = require('./routes/AutomotrizRutas')
 
 
 const app = express();
@@ -31,7 +31,7 @@ app.use(express.urlencoded({extended: false}))
 
 
 //routes
-app.use('/', vehiculoRoute)
+app.use('/', automotrizRutas)
 
 
 //static files

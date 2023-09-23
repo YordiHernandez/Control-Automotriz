@@ -32,6 +32,53 @@ app.use(express.urlencoded({extended: false}))
 
 //routes
 app.use('/', automotrizRutas)
+app.get('/crear_cliente', (req, res) => {
+    res.render('./crear/crear_cliente')
+})
+app.get('/crear_vehiculo' , async (req, res)=>{
+
+    const qmarca = await consultarMarca(req) 
+
+    const qtipo = await consultarTipo (req)
+
+    const qcliente = await consultarCliente (req)
+
+    res.render('./crear/crear_vehiculo', { qmarca, qtipo, qcliente });
+
+// Función para consultar las marcas
+async function consultarMarca(req) {
+    return new Promise((resolve, reject) => {
+        req.getConnection((err, conn) => {
+                conn.query('SELECT * FROM marca', (err, marcas) => {
+                        resolve(marcas);
+                });    
+        });
+    });
+}
+
+// Función para consultar los tipos de vehículo
+async function consultarTipo(req) {
+    return new Promise((resolve, reject) => {
+        req.getConnection((err, conn) => {
+                conn.query('SELECT * FROM tipo_vehiculo', (err, tipoV) => {       
+                        resolve(tipoV);
+                });
+        });
+    })
+}
+
+async function consultarCliente(req) {
+    return new Promise((resolve, reject) => {
+        req.getConnection((err, conn) => {
+                conn.query('SELECT pk_cliente, nombre FROM cliente', (err, cliente) => {       
+                        resolve(cliente);
+                });
+        });
+    })
+}
+
+
+})
 
 
 //static files

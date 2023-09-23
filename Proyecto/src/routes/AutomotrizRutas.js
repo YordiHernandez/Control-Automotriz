@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 
 const AutomotrizControler = require('../controllers/AutomotrizControler')
+
 //RUTAS DE VEHICULOS
-router.get('/vehiculos', AutomotrizControler.listVehicule) //Ruta del API 
-router.post('/vehiculos/add', AutomotrizControler.saveVehicule)
-router.get('/vehiculos/delete/:pk_Id_Vehiculo', AutomotrizControler.deleteVehiculo)
-router.get('/vehiculos/update/:pk_Id_Vehiculo', AutomotrizControler.editVehicule)
-router.post('/vehiculos/update/:pk_Id_Vehiculo', AutomotrizControler.updateVehiculo)
+router.get('/vehiculo', AutomotrizControler.listVehicule) //Ruta del API 
+router.post('/vehiculo/add', AutomotrizControler.saveVehicule)
+router.get('/vehiculo/delete/:pk_vehiculo', AutomotrizControler.deleteVehiculo)
+router.get('/vehiculo/update/:pk_vehiculo', AutomotrizControler.editVehicule)
+router.post('/vehiculo/update/:pk_vehiculo', AutomotrizControler.updateVehiculo)
 
 //RUTA DE MARCA
 router.get('/marca', AutomotrizControler.listMarca)
@@ -18,6 +19,14 @@ router.get('/marca/delete/:pk_marca', AutomotrizControler.deleteMarca)
 
 //RUTA DE TIPO VEHICULO
 router.get('/tipoV', AutomotrizControler.listTipoV)
+router.post('/tipoV/add', AutomotrizControler.saveTipoV)
+router.get('/tipoV/update/:pk_tipo', AutomotrizControler.editTipoV)
+router.post('/tipoV/update/:pk_tipo', AutomotrizControler.updateTipoV)
+router.get('/tipoV/delete/:pk_tipo', AutomotrizControler.deleteTipoV)
+
+//RUTA DE CLIENTES
+router.get('/cliente', AutomotrizControler.listCliente)
+router.post('/cliente/add', AutomotrizControler.saveCliente)
 
 
 

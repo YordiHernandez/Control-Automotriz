@@ -1,34 +1,34 @@
-<%- include ('partials/_header') -%>
+<%- include ('../partials/_header') -%>
 
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-5">
             <div class="card">
                 <div class="card">
-                    <form action="/update/<%= (data.pk_Id_Vehiculo) %>" method="post" style="padding: 5px;">
+                    <form action="/vehiculo/update/<%= (data.pk_vehiculo) %>" method="post" style="padding: 5px;">
                         <div class="form-group">
-                            <input type="text" name="id" value="<%= (data.pk_Id_Vehiculo) %>" class="form-control" style="margin-bottom: 5px; display:none;"/>
+                            <input type="text" name="id" value="<%= (data.pk_vehiculo) %>" class="form-control" style="margin-bottom: 5px; display:none;"/>
                         </div>
                         <div class="form-group">
-                            <input type="text" name="marca" value="<%= (data.Marca_Vehiculo) %>" class="form-control" style="margin-bottom: 5px;"/>
+                            <input type="text" name="marca" value="<%= (data.fk_marca) %>" class="form-control" style="margin-bottom: 5px;"/>
                         </div>
                         <div class="form-group">
-                            <input type="text" name="tipo" value="<%= (data.Tipo_Vehiculo) %>" class="form-control" style="margin-bottom: 5px;"/>
+                            <input type="text" name="tipo" value="<%= (data.fk_tipo) %>" class="form-control" style="margin-bottom: 5px;"/>
                         </div>
                         <div class="form-group">
-                            <input type="text" name="modelo" value="<%= (data.Modelo_Vehiculo) %>" class="form-control" style="margin-bottom: 5px;"/>
+                            <input type="text" name="modelo" value="<%= (data.modelo) %>" class="form-control" style="margin-bottom: 5px;"/>
                         </div>
                         <div class="form-group">
-                            <input type="text" name="placa"  value="<%= (data.Placa_Vehiculo) %>" class="form-control" style="margin-bottom: 5px;" />
+                            <input type="text" name="placa"  value="<%= (data.placa) %>" class="form-control" style="margin-bottom: 5px;" />
                         </div>
                         <div class="form-group">
-                            <input type="text" name="color" value="<%= (data.Color_Vehiculo) %>" class="form-control" style="margin-bottom: 5px;" />
+                            <input type="text" name="color" value="<%= (data.color) %>" class="form-control" style="margin-bottom: 5px;" />
                         </div>
                         <div class="form-group">
-                            <input type="text" name="kilometraje" value="<%= (data.Kilometraje_Vehiculo) %>" class="form-control" style="margin-bottom: 5px;" />
+                            <input type="text" name="kilometraje" value="<%= (data.kilometraje) %>" class="form-control" style="margin-bottom: 5px;" />
                         </div>
                         <div class="form-group">
-                            <input type="text" name="cliente"  value="<%= (data.fk_Id_Cliente_V) %>" class="form-control" style="margin-bottom: 5px; display:none;" />
+                            <input type="text" name="cliente"  value="<%= (data.fk_cliente) %>" class="form-control" style="margin-bottom: 5px; display:none;" />
                         </div>
                         <button type="submit" class="btn btn-primary" style="margin-top: 5px;">
                             Editar Vehiculo
@@ -42,4 +42,4 @@
     </div>
 </div>
 
-<%- include ('partials/_footer') -%>
+<%- include ('../partials/_footer') -%>

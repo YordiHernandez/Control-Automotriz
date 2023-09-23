@@ -1,0 +1,26 @@
+<%- include ('../partials/_header') -%>
+
+<div class="row mt-1">
+<div class="col-md-5" style="margin-left: 5px;">
+    <div class="card bg-light ">
+        <div class="card-body">
+            <div class="card-header">Ingresar Cliente</div>
+            <form action="/cliente/add" method="post" style="padding: 5px;">
+                <div class="form-group">
+                    <input type="text" name="nombre" placeholder="Inserte Nombre" class="form-control" style="margin-bottom: 5px;"/>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="correo" placeholder="Inserte correo" class="form-control" style="margin-bottom: 5px;"/>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="dpi" placeholder="Inserte DPI" class="form-control" style="margin-bottom: 5px;"/>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="numero" placeholder="Inserte numero Telefonico" class="form-control" style="margin-bottom: 5px;" />
+                </div>
+                <div class="form-group">
+                    <input type="text" name="direccion" placeholder="Inserte Direccion" class="form-control" style="margin-bottom: 5px;" />
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 5px;">
+                    Guardar Cliente
+                </button>

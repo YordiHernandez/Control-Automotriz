@@ -415,7 +415,7 @@ controller.loginAdmin = async (req, res) => {
             data: tipo[0]*/
             console.log(usuarioValido)
             if (usuarioValido.length > 0) {
-                res.redirect('/menu_empleado')
+                res.redirect('/')
             }  else {
                 res.send('usuario o contraseña incorrectos')
             }

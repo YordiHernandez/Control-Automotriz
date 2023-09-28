@@ -213,7 +213,7 @@ controller.listCliente = (req, res) => {
             if (err) {
                 res.json(err)
             }
-            res.render('clientes' , {  //renderiza en archivo vista tipo
+            res.render('cliente' , {  //renderiza en archivo vista tipo
                 data: cliente
             })
         })
@@ -225,8 +225,42 @@ controller.saveCliente = (req, res) => {
     let data = req.body
     
     req.getConnection((err, conn)=>{
-        conn.query(`insert into CLIENTE(nombre, correo, dpi, numero, direccion_cliente) VALUES ('${data.nombre}','${data.correo}','${data.dpi}', ${data.numero},'${data.direccion}');`, (err, cliente) => { //tipoV hace referencia al resultado del query
+        conn.query(`insert into cliente(nombre, correo, dpi, numero, direccion_cliente) VALUES ('${data.nombre}','${data.correo}','${data.dpi}', ${data.numero},'${data.direccion_cliente}');`, (err, cliente) => { //tipoV hace referencia al resultado del query
             res.redirect('/cliente')
+        })
+    })
+}
+
+controller.editCliente = (req, res) => {
+    const {pk_cliente} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`select * from cliente where pk_cliente = ${pk_cliente}`, (err, tipo) =>{
+            res.render("./editar/editar_cliente" , {
+            data: tipo[0] })
+        })
+    })
+}
+
+controller.updateCliente = (req, res) => {
+
+    const {pk_cliente} = req.params
+    let data = req.body
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`update cliente set nombre = '${data.nombre}', correo = '${data.correo}', dpi = '${data.dpi}', numero = ${data.numero}, direccion_cliente = '${data.direccion_cliente}'  where pk_cliente=${pk_cliente} `, (err, tipoV) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/cliente')
+        })
+    })
+}
+
+controller.deleteCliente = (req, res) => {
+
+    const {pk_cliente} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`delete from cliente where pk_cliente = ${pk_cliente}`, (err, tipoV) =>{
+            res.redirect("/cliente")
         })
     })
 }
@@ -289,5 +323,66 @@ controller.deleteEmpleado = (req, res) => {
         })
     })
 }
+
+//SERVICIOS
+controller.listServicio = (req, res) => {    //linea siempre, solo crearle nomre metodo
+    req.getConnection((err, conn) =>{  //tambien igual
+        conn.query('SELECT * FROM servicio' , (err, servicio) => {  //cambiar select de las tablas y crear el parametro
+            if (err) {
+                res.json(err)
+            }
+            console.log(servicio)
+            res.render('servicio' , {  //renderiza en archivo vista vehiculos
+                data: servicio 
+            })
+        })
+    })
+}
+controller.saveServicio = (req, res) => {
+
+    let data = req.body
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`insert into servicio(descripcion, precio) VALUES ('${data.descripcion}',${data.precio});`, (err, servicio) => { //tipoV hace referencia al resultado del query
+            res.redirect('/servicio')
+        })
+    })
+}
+
+controller.editServicio = (req, res) => {
+    const {pk_servicio} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`select * from servicio where pk_servicio = ${pk_servicio}`, (err, tipo) =>{
+            res.render("./editar/editar_servicio" , {
+            data: tipo[0] })
+        })
+    })
+}
+
+controller.updateServicio = (req, res) => {
+
+    const {pk_servicio} = req.params
+    let data = req.body
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`update servicio set descripcion = '${data.descripcion}', precio = ${data.precio} where pk_servicio=${pk_servicio} `, (err, tipoV) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/servicio')
+        })
+    })
+}
+
+controller.deleteServicio = (req, res) => {
+
+    const {pk_servicio} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`delete from servicio where pk_servicio = ${pk_servicio}`, (err, tipoV) =>{
+            res.redirect("/servicio")
+        })
+    })
+}
+
+
 
 module.exports = controller

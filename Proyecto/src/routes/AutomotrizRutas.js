@@ -27,6 +27,9 @@ router.get('/tipoV/delete/:pk_tipo', AutomotrizControler.deleteTipoV)
 //RUTA DE CLIENTES
 router.get('/cliente', AutomotrizControler.listCliente)
 router.post('/cliente/add', AutomotrizControler.saveCliente)
+router.get('/cliente/update/:pk_cliente', AutomotrizControler.editCliente)
+router.post('/cliente/update/:pk_cliente', AutomotrizControler.updateCliente)
+router.get('/cliente/delete/:pk_cliente', AutomotrizControler.deleteCliente)
 
 //RUTA EMPLEADOS
 router.get('/empleado', AutomotrizControler.listEmpleado)
@@ -34,6 +37,13 @@ router.post('/empleado/add', AutomotrizControler.saveEmpleado)
 router.get('/empleado/update/:pk_empleado', AutomotrizControler.editEmpleado)
 router.post('/empleado/update/:pk_empleado', AutomotrizControler.updateEmpleado)
 router.get('/empleado/delete/:pk_empleado', AutomotrizControler.deleteEmpleado)
+
+//RUTA SERVICIOS
+router.get('/servicio', AutomotrizControler.listServicio)
+router.post('/servicio/add', AutomotrizControler.saveServicio)
+router.get('/servicio/update/:pk_servicio', AutomotrizControler.editServicio)
+router.post('/servicio/update/:pk_servicio', AutomotrizControler.updateServicio)
+router.get('/servicio/delete/:pk_servicio', AutomotrizControler.deleteServicio)
 
 
 module.exports = router;

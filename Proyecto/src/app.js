@@ -20,7 +20,7 @@ app.set('views', path.join(__dirname, 'views'));
 const configdb = {
     host: 'localhost',
     user: 'root',
-    password: 'Jm59460816',
+    password: '12345',
     port: 3306,
     database: 'automotriz',
 };
@@ -32,7 +32,11 @@ app.use(express.urlencoded({extended: false}))
 
 //routes
 app.use('/', automotrizRutas)
-app.get('/crear_cliente', (req, res) => {
+app.get('/login', (req, res) => {
+    res.render('login')
+})
+
+app.get('/crear_cliente', (req, res) => { //ruta para renderizar crear cliente
     res.render('./crear/crear_cliente')
 })
 app.get('/crear_vehiculo' , async (req, res)=>{
@@ -82,7 +86,7 @@ async function consultarCliente(req) {
 
 
 //static files
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, '../public')))
 
 //starting server
 app.listen(app.get('port'), ()=> {

@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const AutomotrizControler = require('../controllers/AutomotrizControler')
+const AutomotrizControler = require('../controllers/AutomotrizControler');
+const { randomBytes } = require('crypto');
+const { resourceLimits } = require('worker_threads');
 
 //RUTAS DE VEHICULOS
 router.get('/vehiculo', AutomotrizControler.listVehicule) //Ruta del API 
@@ -44,6 +46,9 @@ router.post('/servicio/add', AutomotrizControler.saveServicio)
 router.get('/servicio/update/:pk_servicio', AutomotrizControler.editServicio)
 router.post('/servicio/update/:pk_servicio', AutomotrizControler.updateServicio)
 router.get('/servicio/delete/:pk_servicio', AutomotrizControler.deleteServicio)
+
+//RUTA DE LOGIN
+router.post('/login/validar', AutomotrizControler.login)
 
 
 module.exports = router;

@@ -1,3 +1,5 @@
+const { response } = require("express");
+
 const controller = {};
 
 //CONTROLADOR VEHICULO
@@ -383,6 +385,23 @@ controller.deleteServicio = (req, res) => {
     })
 }
 
+//LOGIN
 
+controller.login = async (req, res) => {
+        const data = req.body;
+
+        req.getConnection((err, conn) =>{
+            conn.query(`select * from usuarios_cliente where usuario_cliente = '${data.user}' AND clave_cliente = '${data.pass}'`, (err, usuarioValido) =>{
+                /*res.render("./editar/editar_servicio" , {
+                data: tipo[0]*/
+                console.log(usuarioValido)
+                if (usuarioValido) {
+                    res.send('Inicio exitoso')
+                }  else {
+                    res.send('usuario o contraseña incorrectos')
+                }
+            })
+        })
+}
 
 module.exports = controller

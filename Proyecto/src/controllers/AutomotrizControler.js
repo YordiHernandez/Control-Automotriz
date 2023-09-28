@@ -395,13 +395,47 @@ controller.login = async (req, res) => {
                 /*res.render("./editar/editar_servicio" , {
                 data: tipo[0]*/
                 console.log(usuarioValido)
-                if (usuarioValido) {
-                    res.send('Inicio exitoso')
+                if (usuarioValido.length > 0) {
+                    res.redirect('/menu_user')
                 }  else {
                     res.send('usuario o contraseña incorrectos')
                 }
             })
         })
 }
+
+//LOGIN
+
+controller.loginAdmin = async (req, res) => {
+    const data = req.body;
+
+    req.getConnection((err, conn) =>{
+        conn.query(`select * from usuarios_empleado where usuario_empleado = '${data.user}' AND clave_empleado = '${data.pass}'`, (err, usuarioValido) =>{
+            /*res.render("./editar/editar_servicio" , {
+            data: tipo[0]*/
+            console.log(usuarioValido)
+            if (usuarioValido.length > 0) {
+                res.redirect('/menu_empleado')
+            }  else {
+                res.send('usuario o contraseña incorrectos')
+            }
+        })
+    })
+}
+controller.menuEmpleado = (req, res) => {
+    res.render('menu_empleado')
+}
+
+
+//MENU USUARIO
+controller.menuUser = (req, res) => {
+    res.render('menu_user')
+}
+
+//index
+controller.index = (req, res) => {
+    res.render('index')
+}
+
 
 module.exports = controller

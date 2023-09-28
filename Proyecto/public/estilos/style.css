@@ -8,7 +8,7 @@
 .container {
   padding-left: 8%;
   padding-right: 8%;
-  background-image: url("./images/fondo.jpg");
+  background-image: url("../images/fondo.jpg");
   height: 100vh;
   width: 100%;
   background-position: center;
@@ -114,14 +114,14 @@ h1 {
 }
 
 .card.card-1 {
-  background-image: url("./images/llantas.jpg");
+  background-image: url("../images/llantas.jpg");
 }
 .card.card-2 {
-  background-image: url("./images/servicio.jpg");
+  background-image: url("../images/servicio.jpg");
 }
 .card.card-3 {
-  background-image: url("./images/aliena.jpg");
+  background-image: url("../images/aliena.jpg");
 }
 .card.card-4 {
-  background-image: url("./images/repa.jpg");
+  background-image: url("../images/repa.jpg");
 }

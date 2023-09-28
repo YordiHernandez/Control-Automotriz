@@ -20,7 +20,7 @@ app.set('views', path.join(__dirname, 'views'));
 const configdb = {
     host: 'localhost',
     user: 'root',
-    password: '12345',
+    password: 'Jm59460816',
     port: 3306,
     database: 'automotriz',
 };
@@ -34,6 +34,9 @@ app.use(express.urlencoded({extended: false}))
 app.use('/', automotrizRutas)
 app.get('/login', (req, res) => {
     res.render('login')
+})
+app.get('/login_admin', (req, res) => {
+    res.render('login_admin')
 })
 
 app.get('/crear_cliente', (req, res) => { //ruta para renderizar crear cliente

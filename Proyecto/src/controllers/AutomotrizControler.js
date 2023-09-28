@@ -83,9 +83,9 @@ controller.deleteVehiculo = (req, res) => {
 
 //CONTROLADORES DE MARCA
 
-controller.listMarca = (req, res) => {
-    req.getConnection((err, conn) =>{
-        conn.query('SELECT * FROM marca' , (err, marca) => {
+controller.listMarca = (req, res) => {    //linea siempre, solo crearle nomre metodo
+    req.getConnection((err, conn) =>{  //tambien igual
+        conn.query('SELECT * FROM marca' , (err, marca) => {  //cambiar select de las tablas y crear el parametro
             if (err) {
                 res.json(err)
             }
@@ -96,6 +96,7 @@ controller.listMarca = (req, res) => {
         })
     })
 }
+
 
 controller.saveMarca = (req, res) => {
 
@@ -226,6 +227,65 @@ controller.saveCliente = (req, res) => {
     req.getConnection((err, conn)=>{
         conn.query(`insert into CLIENTE(nombre, correo, dpi, numero, direccion_cliente) VALUES ('${data.nombre}','${data.correo}','${data.dpi}', ${data.numero},'${data.direccion}');`, (err, cliente) => { //tipoV hace referencia al resultado del query
             res.redirect('/cliente')
+        })
+    })
+}
+
+//EMPLEADOS 
+controller.listEmpleado = (req, res) => {    //linea siempre, solo crearle nomre metodo
+    req.getConnection((err, conn) =>{  //tambien igual
+        conn.query('SELECT * FROM empleado' , (err, empleado) => {  //cambiar select de las tablas y crear el parametro
+            if (err) {
+                res.json(err)
+            }
+            console.log(empleado)
+            res.render('empleado' , {  //renderiza en archivo vista vehiculos
+                data: empleado 
+            })
+        })
+    })
+}
+controller.saveEmpleado = (req, res) => {
+
+    let data = req.body
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`insert into empleado(nombre, correo, dpi, numero, direccion_Empleado) VALUES ('${data.nombre}','${data.correo}','${data.dpi}', ${data.numero},'${data.direccion_Empleado}');`, (err, cliente) => { //tipoV hace referencia al resultado del query
+            res.redirect('/empleado')
+        })
+    })
+}
+
+controller.editEmpleado = (req, res) => {
+    const {pk_empleado} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`select * from empleado where pk_empleado = ${pk_empleado}`, (err, tipo) =>{
+            res.render("./editar/editar_empleado" , {
+            data: tipo[0] })
+        })
+    })
+}
+
+controller.updateEmpleado = (req, res) => {
+
+    const {pk_empleado} = req.params
+    let data = req.body
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`update empleado set nombre = '${data.nombre}', correo = '${data.correo}', dpi = '${data.dpi}', numero = ${data.numero}, direccion_Empleado = '${data.direccion_Empleado}'  where pk_empleado=${pk_empleado} `, (err, tipoV) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/empleado')
+        })
+    })
+}
+
+controller.deleteEmpleado = (req, res) => {
+
+    const {pk_empleado} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`delete from empleado where pk_empleado = ${pk_empleado}`, (err, tipoV) =>{
+            res.redirect("/empleado")
         })
     })
 }

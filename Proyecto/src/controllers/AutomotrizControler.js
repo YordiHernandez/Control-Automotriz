@@ -415,7 +415,7 @@ controller.loginAdmin = async (req, res) => {
             data: tipo[0]*/
             console.log(usuarioValido)
             if (usuarioValido.length > 0) {
-                res.redirect('/')
+                res.redirect('/menu_admin')
             }  else {
                 res.send('usuario o contraseña incorrectos')
             }
@@ -430,6 +430,11 @@ controller.menuEmpleado = (req, res) => {
 //MENU USUARIO
 controller.menuUser = (req, res) => {
     res.render('menu_user')
+}
+
+//MENU USUARIO
+controller.menuAdmin = (req, res) => {
+    res.render('menu_admin')
 }
 
 //index

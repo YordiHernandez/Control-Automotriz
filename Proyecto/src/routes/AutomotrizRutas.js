@@ -59,6 +59,7 @@ router.post('/login_admin/validar', AutomotrizControler.loginAdmin)
 //RUTA MENU USUARIO
 router.get('/menu_user', AutomotrizControler.menuUser)
 
-
+//RUTA MENU ADMINISTRADOR
+router.get('/menu_admin', AutomotrizControler.menuAdmin)
 
 module.exports = router;

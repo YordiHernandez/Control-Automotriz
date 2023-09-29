@@ -8,7 +8,7 @@
 .container {
   padding-left: 8%;
   padding-right: 8%;
-  background-image: url("./images/fondo.jpg");
+  background-image: url("../images/fondo.jpg");
   height: 100vh;
   width: 100%;
   background-position: center;
@@ -48,44 +48,39 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  text-align: center;
 }
 img {
   width: 70px;
   height: 70px;
 }
-nav ul {
-  list-style: none;
-  display: flex;
-  column-gap: 10px;
-}
-nav ul li a {
-  color: white;
-  text-decoration: none;
-  transition: ease 0.3s;
-}
-nav ul li a:hover {
-  color: cadetblue;
-}
+
 .row {
   display: flex;
   align-items: center;
-  column-gap: 10px;
-  height: 88%;
+  column-gap: 0px;
+  height: 80%;
 }
 h1 {
   color: white;
   font-size: 100px;
 }
+h2 {
+  color: white;
+  font-size: 40px;
+  text-align: center;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
 .desc {
   font-size: 16px;
 }
 .cards {
-  max-width: 500px;
+  max-width: 900px;
   margin: auto;
 }
 .card {
-  width: 200px;
-  height: 230px;
+  width: 150px;
+  height: 180px;
   display: inline-block;
   background-position: center;
   background-size: cover;
@@ -114,17 +109,17 @@ h1 {
 }
 
 .card.card-1 {
-  background-image: url("./images/michelin.jpg");
+  background-image: url("../images/michelin.jpg");
 }
 .card.card-2 {
-  background-image: url("./images/servicio.jpg");
+  background-image: url("../images/servicio.jpg");
 }
 .card.card-3 {
-  background-image: url("./images/aliena.jpg");
+  background-image: url("../images/aliena.jpg");
 }
 .card.card-4 {
-  background-image: url("./images/repa.jpg");
+  background-image: url("../images/repa.jpg");
 }
 .card.card-5 {
-  background-image: url("./images/fondo.jpg");
+  background-image: url("../images/fondo.jpg");
 }

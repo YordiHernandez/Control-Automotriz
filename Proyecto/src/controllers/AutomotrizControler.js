@@ -1,10 +1,13 @@
 const { response } = require("express");
+const session = require('express-session');
 
 const controller = {};
 
 //CONTROLADOR VEHICULO
 
 controller.listVehicule = (req, res) => {
+    const userId = req.session.userId;
+    console.log(userId);
     req.getConnection((err, conn) =>{
         conn.query(`SELECT
         vh.pk_vehiculo AS pk_vehiculo,
@@ -22,8 +25,9 @@ controller.listVehicule = (req, res) => {
       INNER JOIN
         cliente cl ON cl.pk_cliente = vh.fk_cliente
       INNER JOIN
-        tipo_vehiculo tv ON tv.pk_tipo = vh.fk_tipo;
-    ` , (err, vehiculos) => {
+        tipo_vehiculo tv ON tv.pk_tipo = vh.fk_tipo
+        WHERE vh.fk_cliente = ${userId};
+        ` , (err, vehiculos) => {
             if (err) {
                 res.json(err)
             }
@@ -36,12 +40,12 @@ controller.listVehicule = (req, res) => {
 }
 
 controller.saveVehicule = (req, res) => {
-
+    const userId = req.session.userId;
     let data = req.body
     
     console.log('dato de vehiculo a insertar: ', data)
     req.getConnection((err, conn)=>{
-        conn.query(`insert into vehiculo(fk_marca, fk_tipo, modelo, placa, color, kilometraje, fk_cliente) values ('${data.marca}','${data.tipo}','${data.modelo}','${data.placa}','${data.color}','${data.kilometraje}',${data.cliente})`, (err, vehiculos) => { //vehiculos hace referencia al resultado del query
+        conn.query(`insert into vehiculo(fk_marca, fk_tipo, modelo, placa, color, kilometraje, fk_cliente) values ('${data.marca}','${data.tipo}','${data.modelo}','${data.placa}','${data.color}','${data.kilometraje}',${userId})`, (err, vehiculos) => { //vehiculos hace referencia al resultado del query
             /*res.render('./crear/crear_vehiculos.ejs')*/
             res.redirect('/vehiculo')
         })
@@ -396,6 +400,9 @@ controller.login = async (req, res) => {
                 data: tipo[0]*/
                 console.log(usuarioValido)
                 if (usuarioValido.length > 0) {
+
+                req.session.userId = usuarioValido[0].fk_cliente;
+                    
                     res.redirect('/menu_user')
                 }  else {
                     res.send('usuario o contraseña incorrectos')
@@ -404,7 +411,7 @@ controller.login = async (req, res) => {
         })
 }
 
-//LOGIN
+//LOGIN ADMIN
 
 controller.loginAdmin = async (req, res) => {
     const data = req.body;
@@ -442,5 +449,13 @@ controller.index = (req, res) => {
     res.render('index')
 }
 
+//verificar sesion
+controller.verSesion = (req, res) => {
+    if (req.session.userId) {
+      res.send('El ID de usuario en la sesión es: ' + req.session.userId);
+    } else {
+      res.send('La sesión no contiene un ID de usuario.');
+    }
+  };
 
 module.exports = controller

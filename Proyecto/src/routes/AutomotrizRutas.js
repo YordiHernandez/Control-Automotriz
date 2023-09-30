@@ -52,6 +52,8 @@ router.get('/servicio/delete/:pk_servicio', AutomotrizControler.deleteServicio)
 
 //RUTA DE LOGIN
 router.post('/login/validar', AutomotrizControler.login)
+//VERIFICAR SESSION 
+router.get('/ver-sesion', AutomotrizControler.verSesion)
 
 //RUTA DE LOGIN ADMIN  
 router.post('/login_admin/validar', AutomotrizControler.loginAdmin)
@@ -61,5 +63,6 @@ router.get('/menu_user', AutomotrizControler.menuUser)
 
 //RUTA MENU ADMINISTRADOR
 router.get('/menu_admin', AutomotrizControler.menuAdmin)
+
 
 module.exports = router;

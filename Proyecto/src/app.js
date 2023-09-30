@@ -4,6 +4,7 @@ const morgan = require('morgan')
 const mysql = require('mysql')
 const mysql2 = require('mysql2')
 const myConnection = require('express-myconnection')
+const session = require('express-session')
 
 //exportando rutas
 const automotrizRutas = require('./routes/AutomotrizRutas')
@@ -20,10 +21,16 @@ app.set('views', path.join(__dirname, 'views'));
 const configdb = {
     host: 'localhost',
     user: 'root',
-    password: 'Jm59460816',
+    password: '12345',
     port: 3306,
     database: 'automotriz',
 };
+
+app.use(session({
+    secret: 'un_secreto',
+    resave: false,
+    saveUninitialized: true
+}))
 
 app.use(morgan('dev'));
 app.use(myConnection(mysql2, configdb, 'single'));
@@ -32,12 +39,17 @@ app.use(express.urlencoded({extended: false}))
 
 //routes
 app.use('/', automotrizRutas)
+//ROUTES LOGIN
+
 app.get('/login', (req, res) => {
     res.render('login')
 })
+
 app.get('/login_admin', (req, res) => {
     res.render('login_admin')
 })
+
+/////
 
 app.get('/crear_cliente', (req, res) => { //ruta para renderizar crear cliente
     res.render('./crear/crear_cliente')
@@ -95,3 +107,5 @@ app.use(express.static(path.join(__dirname, '../public')))
 app.listen(app.get('port'), ()=> {
     console.log('server on port 3000');
 })
+
+module.exports = app

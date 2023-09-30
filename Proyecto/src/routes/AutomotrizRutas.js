@@ -57,8 +57,9 @@ router.get('/servicio/update/:pk_servicio', AutomotrizControler.editServicio)
 router.post('/servicio/update/:pk_servicio', AutomotrizControler.updateServicio)
 router.get('/servicio/delete/:pk_servicio', AutomotrizControler.deleteServicio)
 
-//RUTA DE LOGIN
+//RUTA DE LOGIN Y LOGUT
 router.post('/login/validar', AutomotrizControler.login)
+router.get('/logout', AutomotrizControler.logout)
 //VERIFICAR SESSION 
 router.get('/ver-sesion', AutomotrizControler.verSesion)
 

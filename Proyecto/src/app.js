@@ -21,7 +21,7 @@ app.set('views', path.join(__dirname, 'views'));
 const configdb = {
     host: 'localhost',
     user: 'root',
-    password: 'Jm59460816',
+    password: '12345',
     port: 3306,
     database: 'automotriz',
 };
@@ -54,6 +54,7 @@ app.get('/login_admin', (req, res) => {
 app.get('/crear_cliente', (req, res) => { //ruta para renderizar crear cliente
     res.render('./crear/crear_cliente')
 })
+
 app.get('/crear_vehiculo' , async (req, res)=>{
 
     const qmarca = await consultarMarca(req) 
@@ -95,8 +96,6 @@ async function consultarCliente(req) {
         });
     })
 }
-
-
 })
 
 app.get('/crear_vehiculo_admin' , async (req, res)=>{

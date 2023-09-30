@@ -10,10 +10,22 @@
                             <input type="text" name="id" value="<%= (data.pk_vehiculo) %>" class="form-control" style="margin-bottom: 5px; display:none;"/>
                         </div>
                         <div class="form-group">
-                            <input type="text" name="marca" value="<%= (data.fk_marca) %>" class="form-control" style="margin-bottom: 5px;"/>
+                            <!--input type="text" name="marca" value="<%= (data.fk_marca) %>" class="form-control" style="margin-bottom: 5px;"/-->
+                            <label for="marca">Seleccione Marca:</label>
+                    <select name="marca" id="marca" class="form-control" style="margin-bottom: 5px;">
+                        <% for (const opcion of qmarca) { %>
+                            <option value="<%= opcion.pk_marca %>"><%= opcion.descripcion %></option>
+                        <% } %>
+                    </select>
                         </div>
                         <div class="form-group">
-                            <input type="text" name="tipo" value="<%= (data.fk_tipo) %>" class="form-control" style="margin-bottom: 5px;"/>
+                            <!--input type="text" name="tipo" value="<%= (data.fk_tipo) %>" class="form-control" style="margin-bottom: 5px;"/-->
+                            <label for="marca">Seleccione Tipo Vehiculo:</label>
+                    <select name="tipo" id="tipo" class="form-control" style="margin-bottom: 5px;">
+                        <% for (const opcion of qtipo) { %>
+                            <option value="<%= opcion.pk_tipo %>"><%= opcion.descripcion %></option>
+                        <% } %>
+                    </select>
                         </div>
                         <div class="form-group">
                             <input type="text" name="modelo" value="<%= (data.modelo) %>" class="form-control" style="margin-bottom: 5px;"/>

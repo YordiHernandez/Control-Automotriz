@@ -4,8 +4,6 @@ const session = require('express-session');
 const controller = {};
 
 // CONTROLADOR VEHICULO ADMIN
-
-
 controller.listVehiculeadmin = (req, res) => {
     const userId = req.session.userId;
     console.log(userId);
@@ -52,15 +50,15 @@ controller.saveVehiculeadmin = (req, res) => {
     })
 }
 
-controller.editVehiculeadmin = (req, res) => {
-    const {pk_vehiculo} = req.params
+controller.editVehiculeadmin = async (req, res) => {
 
     req.getConnection((err, conn) =>{
         conn.query(`select * from vehiculo where pk_vehiculo = ${pk_vehiculo}`, (err, vehiculos) =>{
             res.render("./editar/editar_vehiculos" , {
-            data: vehiculos[0] })
+            data: vehiculos[0]})
         })
     })
+   
 }
 
 controller.updateVehiculoadmin = (req, res) => {
@@ -137,15 +135,74 @@ controller.saveVehicule = (req, res) => {
     })
 }
 
-controller.editVehicule = (req, res) => {
+controller.editVehicule = async (req, res) => {
     const {pk_vehiculo} = req.params
 
-    req.getConnection((err, conn) =>{
+    const qmarca = await consultarMarca(req) 
+
+    const qtipo = await consultarTipo (req)
+
+    const qcliente = await consultarCliente (req)
+
+    const vehiculos = await consultarVehiculo(req, pk_vehiculo);
+
+    res.render("./editar/editar_vehiculos", {
+        data: vehiculos[0],
+        qmarca,
+        qtipo,
+        qcliente
+    });
+
+    async function consultarVehiculo(req, pk_vehiculo) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                conn.query(
+                    `SELECT * FROM vehiculo WHERE pk_vehiculo = ${pk_vehiculo}`,
+                    (err, vehiculos) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(vehiculos);
+                        }
+                    }
+                );
+            });
+        });
+    }
+    async function consultarMarca(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                    conn.query('SELECT * FROM marca', (err, marcas) => {
+                            resolve(marcas);
+                    });    
+            });
+        });
+    }
+    // Función para consultar los tipos de vehículo
+    async function consultarTipo(req) {
+    return new Promise((resolve, reject) => {
+        req.getConnection((err, conn) => {
+                conn.query('SELECT * FROM tipo_vehiculo', (err, tipoV) => {       
+                        resolve(tipoV);
+                });
+            });
+        })
+    }
+    async function consultarCliente(req) {
+    return new Promise((resolve, reject) => {
+        req.getConnection((err, conn) => {
+                conn.query('SELECT pk_cliente, nombre FROM cliente', (err, cliente) => {       
+                        resolve(cliente);
+                });
+             });
+        })
+    }
+    /*req.getConnection((err, conn) =>{
         conn.query(`select * from vehiculo where pk_vehiculo = ${pk_vehiculo}`, (err, vehiculos) =>{
             res.render("./editar/editar_vehiculos" , {
             data: vehiculos[0] })
         })
-    })
+    })*/
 }
 
 controller.updateVehiculo = (req, res) => {
@@ -474,7 +531,7 @@ controller.deleteServicio = (req, res) => {
     })
 }
 
-//LOGIN
+//LOGIN Y LOGOUT
 
 controller.login = async (req, res) => {
         const data = req.body;
@@ -495,6 +552,16 @@ controller.login = async (req, res) => {
             })
         })
 }
+
+controller.logout = async (req, res) =>{
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error al cerrar sesión:', err);
+      }
+      // Redirige a la página de inicio de sesión u otra página de tu elección
+      res.redirect('/');
+    });
+  }
 
 //LOGIN ADMIN
 

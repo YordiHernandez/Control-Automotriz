@@ -49,5 +49,62 @@
 </div>
 </div>
 </div>
-<%- include ('partials/_footer') -%>
+<script type="text/javascript" src="/pdf/jspdf.min.js"></script>
+<a href="javascript:genPDF()">Generar Reporte de Vehículo</a>
 
+<script type="text/javascript">
+function genPDF() {
+    // Crear un nuevo documento PDF en orientación horizontal
+    var doc = new jsPDF({
+        orientation: 'landscape' // Establecer la orientación en paisaje
+    });
+
+    // Obtener la tabla HTML
+    var table = document.querySelector('.table');
+
+    // Obtener las filas de la tabla
+    var rows = table.querySelectorAll('tr');
+
+    // Crear un arreglo para almacenar los datos de la tabla
+    var tableData = [];
+
+    // Recorrer las filas de la tabla y extraer los datos (comenzando desde la columna 3)
+    for (var i = 0; i < rows.length; i++) { // Empezar desde 0 para incluir todas las filas
+        var rowData = [];
+        var cols = rows[i].querySelectorAll('td');
+        for (var j = 2; j < cols.length; j++) { // Empezar desde 2 para omitir las dos primeras columnas
+            rowData.push(cols[j].textContent);
+        }
+        tableData.push(rowData);
+    }
+
+    // Configurar el espacio entre filas y columnas
+    var rowHeight = 10;
+    var columnSpacing = 40; // Espacio entre columnas
+    var horizontalPosition = 10; // Posición horizontal de los datos
+
+    // Configurar el estilo de la tabla
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0); // Color de texto negro
+
+    // Agregar encabezados a la tabla (usar fila 1 como encabezados)
+    var headers = ['Marca', 'Tipo', 'Modelo', 'Placa', 'Color', 'Kilometraje','Cliente'];
+
+    var yPos = 20; // Posición vertical de los encabezados
+    for (var i = 0; i < headers.length; i++) {
+        doc.text(horizontalPosition + i * columnSpacing, yPos, headers[i]);
+    }
+
+    // Generar la tabla en el documento PDF
+    yPos = 40; // Posición vertical de los datos (agregando un margen de 10)
+    for (var i = 0; i < tableData.length; i++) {
+        for (var j = 0; j < tableData[i].length; j++) {
+            doc.text(horizontalPosition + j * columnSpacing, yPos + i * rowHeight, tableData[i][j]);
+        }
+    }
+
+    // Guardar el documento PDF con un nombre
+    doc.save('Reporte.pdf');
+}
+</script>
+<%- include ('partials/_footer') -%>

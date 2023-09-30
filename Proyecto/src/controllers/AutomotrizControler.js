@@ -69,7 +69,7 @@ controller.updateVehiculoadmin = (req, res) => {
     console.log('dato de vehiculo a insertar: ', data)
     req.getConnection((err, conn)=>{
         conn.query(`update vehiculo set fk_marca = '${data.marca}' , fk_tipo = '${data.tipo}' , modelo = '${data.modelo}' , placa = '${data.placa}' , color = '${data.color}' , kilometraje = '${data.kilometraje}' , fk_cliente = ${data.cliente} where pk_vehiculo = ${pk_vehiculo} `, (err, vehiculos) => { //vehiculos hace referencia al resultado del query
-            res.redirect('/vehiculo')
+            res.redirect('/vehiculosadmin')
         })
     })
 }
@@ -80,7 +80,7 @@ controller.deleteVehiculoadmin = (req, res) => {
 
     req.getConnection((err, conn) =>{
         conn.query(`delete from vehiculo where pk_vehiculo = ${pk_vehiculo}`, (err, vehiculos) =>{
-            res.redirect("/vehiculo")
+            res.redirect("/vehiculosadmin")
         })
     })
 }

@@ -36,8 +36,8 @@
                             <td><%= (data[i].kilometraje) %></td>
                             <td><%= (data[i].cliente) %></td>
                             <td>
-                                <a href="vehiculo/delete/<%= data[i].pk_vehiculo %>" class="btn btn-danger">Borrar</a>
-                                <a href="vehiculo/update/<%= data[i].pk_vehiculo %>" class="btn btn-info">Modificar</a>
+                                <a href="vehiculosadmin/delete/<%= data[i].pk_vehiculo %>" class="btn btn-danger">Borrar</a>
+                                <a href="vehiculosadmin/update/<%= data[i].pk_vehiculo %>" class="btn btn-info" style="display: none;">Modificar</a>
                             </td>
                         </tr>
                 <% } %>

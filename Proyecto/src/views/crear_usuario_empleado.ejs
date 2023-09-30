@@ -9,7 +9,7 @@
                 <thead>
                     <tr>
                         <th>N.</th>
-                        <th>Cliente</th>
+                        <th>Empleado</th>
                         <th>Usuario</th>
                         <th>Contraseña</th>
                         <th>Acciones</th>
@@ -40,7 +40,13 @@
                     <div class="card-header">Ingreso de Datos</div>
                     <form action="usuario_empleado/add" method="post" style="padding: 5px;">
                         <div class="form-group">
-                            <input type="text" name="empleado" placeholder="Seleccione Empleado" class="form-control" style="margin-bottom: 5px;"/>
+                            <!--input type="text" name="empleado" placeholder="Seleccione Empleado" class="form-control" style="margin-bottom: 5px;"/-->
+                            <label for="empleado">Seleccione Empleado:</label>
+                    <select name="empleado" id="empleado" class="form-control" style="margin-bottom: 5px;">
+                        <% for (const opcion of qempleado) { %>
+                            <option value="<%= opcion.pk_empleado %>"><%= opcion.nombre %></option>
+                        <% } %>
+                    </select>
                         </div>
                         <div class="form-group">
                             <input type="text" name="usuario" placeholder="Ingrese su Usuario" class="form-control" style="margin-bottom: 5px;"/>

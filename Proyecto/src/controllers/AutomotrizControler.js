@@ -416,6 +416,7 @@ controller.deleteCliente = (req, res) => {
 //EMPLEADOS 
 controller.listEmpleado = (req, res) => {    //linea siempre, solo crearle nomre metodo
     req.getConnection((err, conn) =>{  //tambien igual
+
         conn.query('SELECT * FROM empleado' , (err, empleado) => {  //cambiar select de las tablas y crear el parametro
             if (err) {
                 res.json(err)
@@ -532,8 +533,50 @@ controller.deleteServicio = (req, res) => {
 }
 
 //crear usuario cliente
-controller.listUserCliente = (req, res) => {    //linea siempre, solo crearle nomre metodo
-    req.getConnection((err, conn) =>{  //tambien igual
+controller.listUserCliente = async (req, res) => {    //linea siempre, solo crearle nomre metodo
+    
+    const qcliente = await consultarCliente(req)
+    const ucliente = await consultarUcliente(req)
+
+    res.render("crear_usuario_cliente", {
+        data: ucliente[0],
+        qcliente
+    });
+
+    async function consultarUcliente(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                conn.query(
+                    `Select uc.pk_ucliente as id_usuario,cl.nombre as cliente,uc.usuario_cliente as usuario,uc.clave_cliente as clave from usuarios_cliente uc inner join cliente cl on uc.fk_cliente = cl.pk_cliente;`,
+                    (err, ucliente) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(ucliente);
+                        }
+                    }
+                );
+            });
+        });
+    }
+
+    async function consultarCliente(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                conn.query(
+                    `SELECT * FROM cliente`,
+                    (err, qcliente) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(qcliente);
+                        }
+                    }
+                );
+            });
+        });
+    }
+    /*req.getConnection((err, conn) =>{  //tambien igual
         conn.query('Select uc.pk_ucliente as id_usuario,cl.nombre as cliente,uc.usuario_cliente as usuario,uc.clave_cliente as clave from usuarios_cliente uc inner join cliente cl on uc.fk_cliente = cl.pk_cliente;' , (err, usuario_cliente) => {  //cambiar select de las tablas y crear el parametro
             if (err) {
                 res.json(err)
@@ -542,8 +585,9 @@ controller.listUserCliente = (req, res) => {    //linea siempre, solo crearle no
                 data: usuario_cliente 
             })
         })
-    })
+    })*/
 }
+
 controller.saveUserCliente = (req, res) => {
 
     let data = req.body
@@ -590,8 +634,50 @@ controller.deleteUserCliente = (req, res) => {
 }
 
 //crear usuario admin
-controller.listUserEmpleado = (req, res) => {    //linea siempre, solo crearle nomre metodo
-    req.getConnection((err, conn) =>{  //tambien igual
+controller.listUserEmpleado =  async (req, res) => {    //linea siempre, solo crearle nomre metodo
+
+    const qempleado = await consultarEmpleado(req)
+    const uempleado = await consultarUempleado(req)
+
+    res.render("crear_usuario_empleado", {
+        data: uempleado[0],
+        qempleado
+    });
+
+    async function consultarUempleado(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                conn.query(
+                    `Select ue.pk_uempleado as id_usuario,em.nombre as empleado,ue.usuario_empleado as usuario,ue.clave_empleado as clave from usuarios_empleado ue inner join empleado em on ue.fk_empleado = em.pk_empleado;`,
+                    (err, uemplado) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(uemplado);
+                        }
+                    }
+                );
+            });
+        });
+    }
+
+    async function consultarEmpleado(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                conn.query(
+                    `SELECT * FROM empleado`,
+                    (err, qempleado) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(qempleado);
+                        }
+                    }
+                );
+            });
+        });
+    }
+    /*req.getConnection((err, conn) =>{  //tambien igual
         conn.query('Select ue.pk_uempleado as id_usuario,em.nombre as empleado,ue.usuario_empleado as usuario,ue.clave_empleado as clave from usuarios_empleado ue inner join empleado em on ue.fk_empleado = em.pk_empleado;' , (err, usuario_empleado) => {  //cambiar select de las tablas y crear el parametro
             if (err) {
                 res.json(err)
@@ -600,7 +686,7 @@ controller.listUserEmpleado = (req, res) => {    //linea siempre, solo crearle n
                 data: usuario_empleado 
             })
         })
-    })
+    })*/
 }
 controller.saveUserEmpleado = (req, res) => {
 

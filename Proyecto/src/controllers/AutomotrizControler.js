@@ -539,7 +539,7 @@ controller.listUserCliente = async (req, res) => {    //linea siempre, solo crea
     const ucliente = await consultarUcliente(req)
 
     res.render("crear_usuario_cliente", {
-        data: ucliente[0],
+        data: ucliente,
         qcliente
     });
 
@@ -640,7 +640,7 @@ controller.listUserEmpleado =  async (req, res) => {    //linea siempre, solo cr
     const uempleado = await consultarUempleado(req)
 
     res.render("crear_usuario_empleado", {
-        data: uempleado[0],
+        data: uempleado,
         qempleado
     });
 

@@ -3,7 +3,92 @@ const session = require('express-session');
 
 const controller = {};
 
-//CONTROLADOR VEHICULO
+// CONTROLADOR VEHICULO ADMIN
+
+
+controller.listVehiculeadmin = (req, res) => {
+    const userId = req.session.userId;
+    console.log(userId);
+    req.getConnection((err, conn) =>{
+        conn.query(`SELECT
+        vh.pk_vehiculo AS pk_vehiculo,
+        mc.descripcion AS marca,
+        tv.descripcion AS tipo_vehiculo,
+        vh.modelo AS modelo,
+        vh.placa AS placa,
+        vh.color AS color,
+        vh.kilometraje AS kilometraje,
+        cl.nombre AS cliente
+      FROM
+        Vehiculo vh
+      INNER JOIN
+        marca mc ON mc.pk_marca = vh.fk_marca
+      INNER JOIN
+        cliente cl ON cl.pk_cliente = vh.fk_cliente
+      INNER JOIN
+        tipo_vehiculo tv ON tv.pk_tipo = vh.fk_tipo;
+        ` , (err, vehiculos) => {
+            if (err) {
+                res.json(err)
+            }
+            console.log(vehiculos)
+            res.render('vehiculosadmin' , {  //renderiza en archivo vista vehiculos
+                data: vehiculos 
+            })
+        })
+    })
+}
+
+controller.saveVehiculeadmin = (req, res) => {
+    const userId = req.session.userId;
+    let data = req.body
+    
+    console.log('dato de vehiculo a insertar: ', data)
+    req.getConnection((err, conn)=>{
+        conn.query(`insert into vehiculo(fk_marca, fk_tipo, modelo, placa, color, kilometraje, fk_cliente) values ('${data.marca}','${data.tipo}','${data.modelo}','${data.placa}','${data.color}','${data.kilometraje}',${data.cliente})`, (err, vehiculos) => { //vehiculos hace referencia al resultado del query
+            /*res.render('./crear/crear_vehiculos.ejs')*/
+            res.redirect('/vehiculosadmin')
+        })
+    })
+}
+
+controller.editVehiculeadmin = (req, res) => {
+    const {pk_vehiculo} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`select * from vehiculo where pk_vehiculo = ${pk_vehiculo}`, (err, vehiculos) =>{
+            res.render("./editar/editar_vehiculos" , {
+            data: vehiculos[0] })
+        })
+    })
+}
+
+controller.updateVehiculoadmin = (req, res) => {
+
+    const {pk_vehiculo} = req.params
+    let data = req.body
+    
+    console.log('dato de vehiculo a insertar: ', data)
+    req.getConnection((err, conn)=>{
+        conn.query(`update vehiculo set fk_marca = '${data.marca}' , fk_tipo = '${data.tipo}' , modelo = '${data.modelo}' , placa = '${data.placa}' , color = '${data.color}' , kilometraje = '${data.kilometraje}' , fk_cliente = ${data.cliente} where pk_vehiculo = ${pk_vehiculo} `, (err, vehiculos) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/vehiculo')
+        })
+    })
+}
+
+controller.deleteVehiculoadmin = (req, res) => {
+
+    const {pk_vehiculo} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`delete from vehiculo where pk_vehiculo = ${pk_vehiculo}`, (err, vehiculos) =>{
+            res.redirect("/vehiculo")
+        })
+    })
+}
+
+
+//CONTROLADOR VEHICULO usuario
 
 controller.listVehicule = (req, res) => {
     const userId = req.session.userId;

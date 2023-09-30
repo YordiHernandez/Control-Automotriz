@@ -8,6 +8,13 @@ const { resourceLimits } = require('worker_threads');
 
 router.get('/',AutomotrizControler.index)
 
+//RUTAS DE VEHICULOS admin
+router.get('/vehiculosadmin', AutomotrizControler.listVehiculeadmin) //Ruta del API 
+router.post('/vehiculosadmin/add', AutomotrizControler.saveVehiculeadmin)
+router.get('/vehiculosadmin/delete/:pk_vehiculo', AutomotrizControler.deleteVehiculoadmin)
+router.get('/vehiculosadmin/update/:pk_vehiculo', AutomotrizControler.editVehiculeadmin)
+router.post('/vehiculosadmin/update/:pk_vehiculo', AutomotrizControler.updateVehiculoadmin)
+
 //RUTAS DE VEHICULOS
 router.get('/vehiculo', AutomotrizControler.listVehicule) //Ruta del API 
 router.post('/vehiculo/add', AutomotrizControler.saveVehicule)

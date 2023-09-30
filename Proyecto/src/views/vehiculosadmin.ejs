@@ -1,0 +1,53 @@
+<%- include ('partials/_header') -%>
+<div class="card border-light mb-4" style="max-width: 100%;">
+<div class="card-header">Vehiculos</div>
+<div class="card-body">
+<div class="container">
+    <a href="/menu_admin" class="btn btn-info">Regresar</a>
+    <a href="/crear_vehiculo_admin" class="btn btn-success">Crear Vehiculo</a>
+    <hr>
+    <div class="row mt-1">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>N.</th>
+                        <th>Marca</th>
+                        <th>Tipo</th>
+                        <th>Modelo</th>
+                        <th>Placa</th>
+                        <th>Color</th>
+                        <th>Kilometraje</th>
+                        <th>Cliente</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <% if (data) { %>
+                    <% for (var i = 0; i < data.length; i++) { %>
+                        <tr>
+                            <td><%= (i + 1)%></td>
+                            <td style="display: none;"><%= (data[i].pk_vehiculo) %></td>
+                            <td><%= (data[i].marca) %></td>
+                            <td><%= (data[i].tipo_vehiculo) %></td>
+                            <td><%= (data[i].modelo) %></td>
+                            <td><%= (data[i].placa) %></td>
+                            <td><%= (data[i].color) %></td>
+                            <td><%= (data[i].kilometraje) %></td>
+                            <td><%= (data[i].cliente) %></td>
+                            <td>
+                                <a href="vehiculo/delete/<%= data[i].pk_vehiculo %>" class="btn btn-danger">Borrar</a>
+                                <a href="vehiculo/update/<%= data[i].pk_vehiculo %>" class="btn btn-info">Modificar</a>
+                            </td>
+                        </tr>
+                <% } %>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<%- include ('partials/_footer') -%>
+

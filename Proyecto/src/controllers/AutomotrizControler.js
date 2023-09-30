@@ -531,6 +531,122 @@ controller.deleteServicio = (req, res) => {
     })
 }
 
+//crear usuario cliente
+controller.listUserCliente = (req, res) => {    //linea siempre, solo crearle nomre metodo
+    req.getConnection((err, conn) =>{  //tambien igual
+        conn.query('Select uc.pk_ucliente as id_usuario,cl.nombre as cliente,uc.usuario_cliente as usuario,uc.clave_cliente as clave from usuarios_cliente uc inner join cliente cl on uc.fk_cliente = cl.pk_cliente;' , (err, usuario_cliente) => {  //cambiar select de las tablas y crear el parametro
+            if (err) {
+                res.json(err)
+            }
+            res.render('crear_usuario_cliente' , {  //renderiza en archivo vista vehiculos
+                data: usuario_cliente 
+            })
+        })
+    })
+}
+controller.saveUserCliente = (req, res) => {
+
+    let data = req.body
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`insert into usuarios_cliente(fk_cliente, usuario_cliente, clave_cliente) VALUES (${data.cliente},'${data.usuario}','${data.pass}');`, (err, usuario_cliente) => { //tipoV hace referencia al resultado del query
+            res.redirect('/usuario_cliente')
+        })
+    })
+}
+
+controller.editUserCliente = (req, res) => {
+    const {pk_servicio} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`select * from servicio where pk_servicio = ${pk_servicio}`, (err, tipo) =>{
+            res.render("./editar/editar_servicio" , {
+            data: tipo[0] })
+        })
+    })
+}
+
+controller.updateUserCliente = (req, res) => {
+
+    const {pk_servicio} = req.params
+    let data = req.body
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`update servicio set descripcion = '${data.descripcion}', precio = ${data.precio} where pk_servicio=${pk_servicio} `, (err, tipoV) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/usuario_cliente')
+        })
+    })
+}
+
+controller.deleteUserCliente = (req, res) => {
+
+    const {pk_ucliente} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`delete from usuarios_cliente where pk_ucliente = ${pk_ucliente}`, (err, usuario_cliente) =>{
+            res.redirect("/usuario_cliente")
+        })
+    })
+}
+
+//crear usuario admin
+controller.listUserEmpleado = (req, res) => {    //linea siempre, solo crearle nomre metodo
+    req.getConnection((err, conn) =>{  //tambien igual
+        conn.query('Select ue.pk_uempleado as id_usuario,em.nombre as empleado,ue.usuario_empleado as usuario,ue.clave_empleado as clave from usuarios_empleado ue inner join empleado em on ue.fk_empleado = em.pk_empleado;' , (err, usuario_empleado) => {  //cambiar select de las tablas y crear el parametro
+            if (err) {
+                res.json(err)
+            }
+            res.render('crear_usuario_empleado' , {  //renderiza en archivo vista vehiculos
+                data: usuario_empleado 
+            })
+        })
+    })
+}
+controller.saveUserEmpleado = (req, res) => {
+
+    let data = req.body
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`insert into usuarios_empleado(fk_empleado, usuario_empleado, clave_empleado) VALUES (${data.empleado},'${data.usuario}','${data.pass}');`, (err, usuario_empleado) => { //tipoV hace referencia al resultado del query
+            res.redirect('/usuario_empleado')
+        })
+    })
+}
+
+controller.editUserEmpleado = (req, res) => {
+    const {pk_servicio} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`select * from servicio where pk_servicio = ${pk_servicio}`, (err, tipo) =>{
+            res.render("./editar/editar_servicio" , {
+            data: tipo[0] })
+        })
+    })
+}
+
+controller.updateUserEmpleado = (req, res) => {
+
+    const {pk_servicio} = req.params
+    let data = req.body
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`update servicio set descripcion = '${data.descripcion}', precio = ${data.precio} where pk_servicio=${pk_servicio} `, (err, usuario_empleado) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/usuario_cliente')
+        })
+    })
+}
+
+controller.deleteUserEmpleado = (req, res) => {
+
+    const {pk_uempleado} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`delete from usuarios_empleado where pk_uempleado = ${pk_uempleado}`, (err, usuario_empleado) =>{
+            res.redirect("/usuario_empleado")
+        })
+    })
+}
+
 //LOGIN Y LOGOUT
 
 controller.login = async (req, res) => {

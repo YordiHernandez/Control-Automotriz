@@ -57,6 +57,21 @@ router.get('/servicio/update/:pk_servicio', AutomotrizControler.editServicio)
 router.post('/servicio/update/:pk_servicio', AutomotrizControler.updateServicio)
 router.get('/servicio/delete/:pk_servicio', AutomotrizControler.deleteServicio)
 
+//RUTAS DE usuarios cliente
+router.get('/usuario_cliente', AutomotrizControler.listUserCliente) //Ruta del API 
+router.post('/usuario_cliente/add', AutomotrizControler.saveUserCliente)
+router.get('/usuario_cliente/delete/:pk_ucliente', AutomotrizControler.deleteUserCliente)
+router.get('/usuario_cliente/update/:pk_ucliente', AutomotrizControler.editUserCliente)
+router.post('/usuario_cliente/update/:pk_ucliente', AutomotrizControler.updateUserCliente)
+
+//RUTAS DE usuarios empleado
+router.get('/usuario_empleado', AutomotrizControler.listUserEmpleado) //Ruta del API 
+router.post('/usuario_empleado/add', AutomotrizControler.saveUserEmpleado)
+router.get('/usuario_empleado/delete/:pk_uempleado', AutomotrizControler.deleteUserEmpleado)
+router.get('/usuario_empleado/update/:pk_uempleado', AutomotrizControler.editUserEmpleado)
+router.post('/usuario_empleado/update/:pk_uempleado', AutomotrizControler.updateUserEmpleado)
+
+
 //RUTA DE LOGIN Y LOGUT
 router.post('/login/validar', AutomotrizControler.login)
 router.get('/logout', AutomotrizControler.logout)

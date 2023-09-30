@@ -109,17 +109,38 @@ h2 {
 }
 
 .card.card-1 {
-  background-image: url("../images/michelin.jpg");
+  background-image: url("../images/Crear\ Empleado.jpg");
 }
 .card.card-2 {
-  background-image: url("../images/servicio.jpg");
+  background-image: url("../images/Crear\ Cliente.jpg");
 }
 .card.card-3 {
-  background-image: url("../images/aliena.jpg");
+  background-image: url("../images/Crear\ Usuario\ Empleado.jpg");
 }
 .card.card-4 {
-  background-image: url("../images/repa.jpg");
+  background-image: url("../images/Usuario\ Cliente.jpg");
 }
 .card.card-5 {
-  background-image: url("../images/fondo.jpg");
+  background-image: url("../images/Ver\ Vehículo.jpg");
+}
+.card.card-6 {
+  background-image: url("../images/Crear\ Servicio.jpg");
+}
+.card.card-7 {
+  background-image: url("../images/Marca.jpg");
+}
+.card.card-8 {
+  background-image: url("../images/Ver\ Vehículo.jpg");
+}
+.card.card-9 {
+  background-image: url("../images/Cotizaciones.jpg");
+}
+.card.card-10 {
+  background-image: url("../images/Estado\ Citas.jpg");
+}
+.card.card-11 {
+  background-image: url("../images/Pagos.jpg");
+}
+.card.card-12 {
+  background-image: url("../images/Bitacoram.jpg");
 }

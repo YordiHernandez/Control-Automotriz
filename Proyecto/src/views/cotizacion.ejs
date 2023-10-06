@@ -1,0 +1,49 @@
+<%- include ('partials/_header') -%>
+<div class="card border-light mb-4" style="max-width: 100%;">
+<div class="card-header">cotizacion</div>
+<div class="card-body">
+<div class="container">
+    <a href="/menu_user" class="btn btn-info">Regresar</a>
+    <a href="/crear_cotizacion" class="btn btn-success">Crear Cotizacion</a>
+    <hr>
+    <div class="row mt-1">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>N.</th>
+                        <th>Kilometraje</th>
+                        <th>Descripcion</th>
+                        <th>Presupuesto</th>
+                        <th>Placa</th>
+                        <th>Estado</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <% if (data) { %>
+                    <% for (var i = 0; i < data.length; i++) { %>
+                        <tr>
+                            <td><%= (i + 1)%></td>
+                            <td style="display: none;"><%= (data[i].pk_cotizacion) %></td>
+                            <td><%= (data[i].kilometraje_cotizacion) %></td>
+                            <td><%= (data[i].descripcion) %></td>
+                            <td><%= (data[i].presupuesto) %></td>
+                            <td><%= (data[i].placa) %></td>
+                            <td><%= (data[i].Estado) %></td>
+                            <td>
+                                <a href="cotizacion/delete/<%= data[i].pk_cotizacion %>" class="btn btn-danger">Borrar</a>
+                                <a href="cotizacion/update/<%= data[i].pk_cotizacion %>" class="btn btn-info">Modificar</a>
+                            </td>
+                        </tr>
+                <% } %>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<%- include ('partials/_footer') -%>
+

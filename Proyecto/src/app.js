@@ -21,7 +21,7 @@ app.set('views', path.join(__dirname, 'views'));
 const configdb = {
     host: 'localhost',
     user: 'root',
-    password: 'Jm59460816',
+    password: '12345',
     port: 3306,
     database: 'automotriz',
 };
@@ -65,6 +65,8 @@ app.get('/crear_vehiculo' , async (req, res)=>{
 
     res.render('./crear/crear_vehiculo', { qmarca, qtipo, qcliente });
 
+
+
 // Función para consultar las marcas
 async function consultarMarca(req) {
     return new Promise((resolve, reject) => {
@@ -96,6 +98,16 @@ async function consultarCliente(req) {
         });
     })
 }
+})
+//COTIZACION
+app.get('/crear_cotizacion' , async (req, res)=>{
+    
+    res.render('./crear/crear_cotizacion');
+})
+//CITAS
+app.get('/crear_cita' , async (req, res)=>{
+    
+    res.render('./crear/crear_cita');
 })
 
 app.get('/crear_vehiculo_admin' , async (req, res)=>{

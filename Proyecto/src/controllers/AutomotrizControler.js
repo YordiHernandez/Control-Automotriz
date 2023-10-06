@@ -810,6 +810,154 @@ controller.verSesion = (req, res) => {
     } else {
       res.send('La sesión no contiene un ID de usuario.');
     }
-  };
+  }
 
+  //CONTROLADOR COTIZACION
+  controller.listcotizacion = (req, res) => {
+    const userId = req.session.userId;
+    console.log(userId);
+    req.getConnection((err, conn) =>{
+        conn.query(`SELECT 
+        cz.pk_cotizacion AS pk_cotizacion,
+        cz.kilometraje_cotizacion AS kilometraje_cotizacion,
+        sv.descripcion AS descripcion,
+        cz.presupuesto AS presupuesto,
+        vh.placa AS placa,
+        cz.Est_Cotizacion AS Estado
+        from cotizacion cz 
+        INNER JOIN 
+        vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo 
+        INNER JOIN
+        servicio sv on cz.fk_servicio=sv.pk_servicio;
+        ` , (err, cotizaciones) => {
+            if (err) {
+                res.json(err)
+            }
+            console.log(cotizaciones)
+            res.render('cotizacion' , {  //renderiza en archivo vista cotizacion
+                data: cotizaciones 
+            })
+        })
+    })
+}
+controller.savecotizacion = (req, res) => {
+    const userId = req.session.userId;
+    let data = req.body
+    
+    console.log('dato de cotizacion a insertar: ', data)
+    req.getConnection((err, conn)=>{
+        conn.query(`insert into cotizacion(kilometraje_cotizacion, fk_servicio, presupuesto, fk_vehiculo) values ('${data.kilometraje}','${data.servicio}','${data.presupuesto}','${data.vehiculo}')`, (err, cotizacion) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/cotizacion')
+        })
+    })
+}
+controller.editcotizacion = async (req, res) => {
+
+    const {pk_cotizacion} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`select * from cotizacion where pk_cotizacion = ${pk_cotizacion}`, (err, cotizaciones) =>{
+            res.render("./editar/editar_cotizacion" , {
+            data: cotizaciones[0]})
+        })
+    })
+   
+}
+controller.updatecotizacion = (req, res) => {
+
+    const {pk_cotizacion} = req.params
+    let data = req.body
+    
+    console.log('dato de cotizacion a insertar: ', data)
+    req.getConnection((err, conn)=>{
+        conn.query(`update cotizacion set kilometraje_cotizacion = '${data.kilometraje}' , fk_servicio = '${data.servicio}' , presupuesto = '${data.presupuesto}' , fk_vehiculo = '${data.vehiculo}' where pk_cotizacion = ${pk_cotizacion} `, (err, cotizaciones) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/cotizacion')
+        })
+    })
+}
+controller.deletecotizacion = (req, res) => {
+
+    const {pk_cotizacion} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`delete from cotizacion where pk_cotizacion = ${pk_cotizacion}`, (err, cotizaciones) =>{
+            res.redirect("/cotizacion")
+        })
+    })
+}
+//CITAS
+controller.listcitas = (req, res) => {
+    const userId = req.session.userId;
+    console.log(userId);
+    req.getConnection((err, conn) =>{
+        conn.query(`SELECT 
+        ct.pk_cita,
+        ct.fecha_entrada AS Entrada,
+        ct.fecha_salida AS Salida,
+        est.descripcion AS Estado,
+        cz.presupuesto AS Presupuesto,
+        ct.foto AS Foto,
+        em.nombre AS Nombre 
+        from Cita ct 
+        INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
+        INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
+        INNER JOIN estados est on ct.estado=est.pk_estados
+        WHERE Status = "N";
+        ` , (err, cita) => {
+            if (err) {
+                res.json(err)
+            }
+            console.log(cita)
+            res.render('citas' , {  //renderiza en archivo vista cita
+                data: cita 
+            })
+        })
+    })
+}
+controller.savecita = (req, res) => {
+    const userId = req.session.userId;
+    let data = req.body
+    
+    console.log('dato de cita a insertar: ', data)
+    req.getConnection((err, conn)=>{
+        conn.query(`INSERT INTO cita(fecha_entrada,fecha_salida,fk_cotizacion,fk_empleado) values ('${data.entrada}','${data.salida}','${data.cotizacion}','${data.Empleado}')`, (err, cita) => { //
+            res.redirect('/citas')
+        })
+    })
+}
+controller.editcita = async (req, res) => {
+
+    const {pk_cita} = req.params
+
+    req.getConnection((err, conn) =>{
+        conn.query(`select * from cita where pk_cita = ${pk_cita}`, (err, cita) =>{
+            res.render("./editar/editar_cita", {
+            data: cita[0]})
+        })
+    })
+   
+}
+controller.updatecita = (req, res) => {
+
+    const {pk_cita} = req.params
+    let data = req.body
+    
+    console.log('dato de cita a insertar: ', data)
+    req.getConnection((err, conn)=>{
+        conn.query(`update cita set fecha_entrada = '${data.Fecha_Entrada}' , fecha_salida = '${data.Fecha_Salida}' , estado = '${data.Estado}' , foto = '${data.Foto}', fk_empleado = '${data.Empleado}' where pk_cita = ${pk_cita} `, (err, cita) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/citas')
+        })
+    })
+}
+controller.deletecita = (req, res) => {
+
+    const {pk_cita} = req.params
+
+    req.getConnection((err, conn)=>{
+        conn.query(`update cita set Status = 'Y' where  pk_cita = ${pk_cita}`, (err, cita) =>{
+            res.redirect("/citas")
+        })
+    })
+}
+;
 module.exports = controller

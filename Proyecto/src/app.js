@@ -102,12 +102,72 @@ async function consultarCliente(req) {
 //COTIZACION
 app.get('/crear_cotizacion' , async (req, res)=>{
     
-    res.render('./crear/crear_cotizacion');
+    const userId = req.session.userId;
+
+    const qservicio = await consultarServicio(req) 
+
+    const qvehiculo = await consultarVehiculo(req)
+
+    res.render('./crear/crear_cotizacion', { qservicio, qvehiculo });
+
+// Función para consultar las marcas
+async function consultarServicio(req) {
+    return new Promise((resolve, reject) => {
+        req.getConnection((err, conn) => {
+                conn.query('SELECT * FROM servicio', (err, servicio) => {
+                        resolve(servicio);
+                });    
+        });
+    });
+}
+
+// Función para consultar los tipos de vehículo
+async function consultarVehiculo(req) {
+
+    return new Promise((resolve, reject) => {
+        req.getConnection((err, conn) => {
+                conn.query(`SELECT * FROM vehiculo where fk_cliente = ${userId}`, (err, vehiculo) => {       
+                        resolve(vehiculo);
+                });
+        });
+    })
+}
+
 })
+
 //CITAS
 app.get('/crear_cita' , async (req, res)=>{
     
-    res.render('./crear/crear_cita');
+    const userId = req.session.userId;
+
+    const qcotizacion = await consultarCotizacion(req) 
+
+    const qempleado = await consultarEmpleado(req)
+
+    res.render('./crear/crear_cita', { qcotizacion, qempleado });
+
+// Función para consultar las marcas
+async function consultarCotizacion(req) {
+    return new Promise((resolve, reject) => {
+        req.getConnection((err, conn) => {
+                conn.query('SELECT * FROM cotizacion', (err, cotizacion) => {
+                        resolve(cotizacion);
+                });    
+        });
+    });
+}
+
+// Función para consultar los tipos de vehículo
+async function consultarEmpleado(req) {
+
+    return new Promise((resolve, reject) => {
+        req.getConnection((err, conn) => {
+                conn.query(`SELECT * FROM empleado`, (err, empleado) => {       
+                        resolve(empleado);
+                });
+        });
+    })
+}
 })
 
 app.get('/crear_vehiculo_admin' , async (req, res)=>{

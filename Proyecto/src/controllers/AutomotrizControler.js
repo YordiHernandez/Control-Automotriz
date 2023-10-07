@@ -813,7 +813,7 @@ controller.verSesion = (req, res) => {
   }
 
   //CONTROLADOR COTIZACION
-  controller.listcotizacion = (req, res) => {
+  controller.listCotizacion = (req, res) => {
     const userId = req.session.userId;
     console.log(userId);
     req.getConnection((err, conn) =>{
@@ -840,18 +840,17 @@ controller.verSesion = (req, res) => {
         })
     })
 }
-controller.savecotizacion = (req, res) => {
-    const userId = req.session.userId;
+controller.saveCotizacion = (req, res) => {
     let data = req.body
     
     console.log('dato de cotizacion a insertar: ', data)
-    req.getConnection((err, conn)=>{
-        conn.query(`insert into cotizacion(kilometraje_cotizacion, fk_servicio, presupuesto, fk_vehiculo) values ('${data.kilometraje}','${data.servicio}','${data.presupuesto}','${data.vehiculo}')`, (err, cotizacion) => { //vehiculos hace referencia al resultado del query
+    req.getConnection((err, conn)=>{ //borre presupuesto manual
+        conn.query(`insert into cotizacion(kilometraje_cotizacion, fk_servicio, fk_vehiculo) values (${data.kilometraje}, ${data.servicio}, ${data.vehiculo})`, (err, cotizacion) => { //vehiculos hace referencia al resultado del query
             res.redirect('/cotizacion')
         })
     })
 }
-controller.editcotizacion = async (req, res) => {
+controller.editCotizacion = async (req, res) => {
 
     const {pk_cotizacion} = req.params
 
@@ -863,7 +862,7 @@ controller.editcotizacion = async (req, res) => {
     })
    
 }
-controller.updatecotizacion = (req, res) => {
+controller.updateCotizacion = (req, res) => {
 
     const {pk_cotizacion} = req.params
     let data = req.body
@@ -875,7 +874,7 @@ controller.updatecotizacion = (req, res) => {
         })
     })
 }
-controller.deletecotizacion = (req, res) => {
+controller.deleteCotizacion = (req, res) => {
 
     const {pk_cotizacion} = req.params
 
@@ -885,6 +884,7 @@ controller.deletecotizacion = (req, res) => {
         })
     })
 }
+
 //CITAS
 controller.listcitas = (req, res) => {
     const userId = req.session.userId;
@@ -898,7 +898,7 @@ controller.listcitas = (req, res) => {
         cz.presupuesto AS Presupuesto,
         ct.foto AS Foto,
         em.nombre AS Nombre 
-        from Cita ct 
+        from cita ct 
         INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
         INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
         INNER JOIN estados est on ct.estado=est.pk_estados
@@ -914,17 +914,19 @@ controller.listcitas = (req, res) => {
         })
     })
 }
+
 controller.savecita = (req, res) => {
     const userId = req.session.userId;
     let data = req.body
     
     console.log('dato de cita a insertar: ', data)
     req.getConnection((err, conn)=>{
-        conn.query(`INSERT INTO cita(fecha_entrada,fecha_salida,fk_cotizacion,fk_empleado) values ('${data.entrada}','${data.salida}','${data.cotizacion}','${data.Empleado}')`, (err, cita) => { //
+        conn.query(`INSERT INTO cita(fecha_entrada,fecha_salida,fk_cotizacion,fk_empleado) values ('${data.entrada}','${data.salida}',${data.cotizacion},${data.Empleado})`, (err, cita) => { //
             res.redirect('/citas')
         })
     })
 }
+
 controller.editcita = async (req, res) => {
 
     const {pk_cita} = req.params
@@ -959,5 +961,68 @@ controller.deletecita = (req, res) => {
         })
     })
 }
-;
+
+//Cita Cliente
+controller.listCitasCliente = (req, res) => {
+    const userId = req.session.userId;
+    req.getConnection((err, conn) =>{
+        conn.query(`SELECT 
+        ct.pk_cita,
+        ct.fecha_entrada AS Entrada,
+        ct.fecha_salida AS Salida,
+        est.Descripcion AS Estado,
+        cz.presupuesto AS Presupuesto,
+        ct.foto AS Foto,
+        em.nombre AS Nombre 
+        from cita ct 
+        INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
+        INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
+        INNER JOIN estados est on ct.estado=est.pk_estados
+        INNER JOIN vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo
+        WHERE Status = "N" AND vh.fk_cliente = ${userId};
+        ` , (err, cita) => {
+            if (err) {
+                res.json(err)
+                return;
+            }
+            console.log(cita)
+            res.render('citas_cliente' , {  //renderiza en archivo vista cita
+                data: cita 
+            })
+        })
+    })
+}
+
+controller.listBitacora = (req, res) => {
+    const userId = req.session.userId;
+    req.getConnection((err, conn) =>{
+        conn.query(`SELECT 
+        bi.pk_bitacora,
+		bi.fk_cita,
+        bi.Fecha_Ingresada,
+        ci.fecha_entrada,
+        ci.fecha_salida,
+        ci.fk_cotizacion,
+        co.fk_servicio,
+        se.descripcion AS servicio,
+        ve.fk_cliente AS cliente,
+        ve.placa
+        from bitacora bi 
+        INNER JOIN cita ci on bi.fk_cita = ci.pk_cita
+        INNER JOIN cotizacion co on ci.fk_cotizacion = co.pk_cotizacion 
+        INNER JOIN servicio se on co.fk_servicio = se.pk_servicio
+        INNER JOIN vehiculo ve on co.fk_vehiculo = ve.pk_vehiculo
+        WHERE ve.fk_cliente = ${userId};
+        ` , (err, bitacora) => {
+            if (err) {
+                res.json(err)
+                return;
+            }
+            res.render('bitacora_cliente' , {  //renderiza en archivo vista cita
+                data: bitacora 
+            })
+        })
+    })
+}
+
 module.exports = controller

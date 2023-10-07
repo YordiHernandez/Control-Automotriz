@@ -21,7 +21,7 @@
                             <td><%= (i + 1)%></td>
                             <td style="display: none;"><%= (data[i].pk_servicio) %></td>
                             <td><%= (data[i].descripcion) %></td>
-                            <td><%= (data[i].precio) %></td>
+                            <td>Q. <%= (data[i].precio) %></td>
                             <td>
                                 <a href="servicio/delete/<%= data[i].pk_servicio %>" class="btn btn-danger">Borrar</a>
                                 <a href="servicio/update/<%= data[i].pk_servicio %>" class="btn btn-info">Modificar</a>

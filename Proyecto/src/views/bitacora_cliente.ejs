@@ -3,8 +3,7 @@
 <div class="card-header">cotizacion</div>
 <div class="card-body">
 <div class="container">
-    <a href="/menu_admin" class="btn btn-info">Regresar</a>
-    <a href="/crear_cita" class="btn btn-success">Crear Cita</a>
+    <a href="/menu_user" class="btn btn-info">Regresar</a>
     <hr>
     <div class="row mt-1">
         <div class="col-md-12">
@@ -14,10 +13,8 @@
                         <th>N.</th>
                         <th>Fecha Entrada</th>
                         <th>Fecha Salida</th>
-                        <th>estado</th>
-                        <th>Presupuesto</th>
-                        <th>foto</th>
-                        <th>Empleado</th>
+                        <th>Placa Vehiculo</th>
+                        <th>Servicio</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,16 +23,14 @@
                         <tr>
                             <td><%= (i + 1)%></td>
                             <td style="display: none;"><%= (data[i].pk_cita) %></td>
-                            <td><%= (data[i].Entrada) %></td>
-                            <td><%= (data[i].Salida) %></td>
-                            <td><%= (data[i].Estado) %></td>
-                            <td><%= (data[i].Presupuesto) %></td>
-                            <td><%= (data[i].Foto) %></td>
-                            <td><%= (data[i].Nombre) %></td>
-                            <td>
+                            <td><%= (data[i].fecha_entrada) %></td>
+                            <td><%= (data[i].fecha_salida) %></td>
+                            <td><%= (data[i].placa) %></td>
+                            <td><%= (data[i].servicio) %></td>
+                            <!--td>
                                 <a href="citas/delete/<%= data[i].pk_cita %>" class="btn btn-danger">Borrar</a>
                                 <a href="citas/update/<%= data[i].pk_cita %>" class="btn btn-info">Modificar</a>
-                            </td>
+                            </td-->
                         </tr>
                 <% } %>
                 <% } %>
@@ -47,4 +42,3 @@
 </div>
 </div>
 <%- include ('partials/_footer') -%>
-

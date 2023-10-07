@@ -150,7 +150,8 @@ app.get('/crear_cita' , async (req, res)=>{
 async function consultarCotizacion(req) {
     return new Promise((resolve, reject) => {
         req.getConnection((err, conn) => {
-                conn.query('SELECT * FROM cotizacion', (err, cotizacion) => {
+                conn.query('SELECT * FROM cotizacion cz inner join vehiculo vh on vh.pk_vehiculo = cz.fk_vehiculo WHERE Est_Cotizacion = "En Espera"', 
+                (err, cotizacion) => {
                         resolve(cotizacion);
                 });    
         });

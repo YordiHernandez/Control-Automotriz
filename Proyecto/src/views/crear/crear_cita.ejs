@@ -14,10 +14,10 @@
                 </div>
                 <div class="form-group">
                     <!--input type="text" name="cotizacion" placeholder="Inserte No. Cotizacion" class="form-control" style="margin-bottom: 5px;"/-->
-                    <label for="cotizacion">Seleccione Cotizacion:</label>
+                    <label for="cotizacion">Seleccione Placa de Vehículo:</label>
                     <select name="cotizacion" id="cotizacion" class="form-control" style="margin-bottom: 5px;">
                         <% for (const opcion of qcotizacion) { %>
-                            <option value="<%= opcion.pk_cotizacion %>"><%= opcion.kilometraje_cotizacion %></option>
+                            <option value="<%= opcion.pk_cotizacion %>"><%= opcion.placa %></option>
                         <% } %>
                     </select>
                 </div>

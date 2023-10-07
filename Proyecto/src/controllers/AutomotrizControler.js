@@ -821,15 +821,15 @@ controller.verSesion = (req, res) => {
         cz.pk_cotizacion AS pk_cotizacion,
         cz.kilometraje_cotizacion AS kilometraje_cotizacion,
         sv.descripcion AS descripcion,
-        cz.presupuesto AS presupuesto,
+        sv.precio AS Precio,
         vh.placa AS placa,
         cz.Est_Cotizacion AS Estado
         from cotizacion cz 
         INNER JOIN 
         vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo 
         INNER JOIN
-        servicio sv on cz.fk_servicio=sv.pk_servicio;
-        ` , (err, cotizaciones) => {
+        servicio sv on cz.fk_servicio=sv.pk_servicio
+        WHERE vh.fk_cliente = ${userId};` , (err, cotizaciones) => {
             if (err) {
                 res.json(err)
             }
@@ -869,7 +869,7 @@ controller.updateCotizacion = (req, res) => {
     
     console.log('dato de cotizacion a insertar: ', data)
     req.getConnection((err, conn)=>{
-        conn.query(`update cotizacion set kilometraje_cotizacion = '${data.kilometraje}' , fk_servicio = '${data.servicio}' , presupuesto = '${data.presupuesto}' , fk_vehiculo = '${data.vehiculo}' where pk_cotizacion = ${pk_cotizacion} `, (err, cotizaciones) => { //vehiculos hace referencia al resultado del query
+        conn.query(`update cotizacion set kilometraje_cotizacion = '${data.kilometraje}' , fk_servicio = '${data.servicio}', fk_vehiculo = '${data.vehiculo}' where pk_cotizacion = ${pk_cotizacion} `, (err, cotizaciones) => { //vehiculos hace referencia al resultado del query
             res.redirect('/cotizacion')
         })
     })
@@ -895,13 +895,14 @@ controller.listcitas = (req, res) => {
         ct.fecha_entrada AS Entrada,
         ct.fecha_salida AS Salida,
         est.descripcion AS Estado,
-        cz.presupuesto AS Presupuesto,
+        sr.precio AS Precio,
         ct.foto AS Foto,
         em.nombre AS Nombre 
         from cita ct 
         INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
         INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
         INNER JOIN estados est on ct.estado=est.pk_estados
+        INNER JOIN servicio sr on sr.pk_servicio = cz.fk_servicio
         WHERE Status = "N";
         ` , (err, cita) => {
             if (err) {
@@ -931,12 +932,54 @@ controller.editcita = async (req, res) => {
 
     const {pk_cita} = req.params
 
-    req.getConnection((err, conn) =>{
-        conn.query(`select * from cita where pk_cita = ${pk_cita}`, (err, cita) =>{
-            res.render("./editar/editar_cita", {
-            data: cita[0]})
-        })
-    })
+    const qestados = await consultarMarca(req) 
+    
+    const qempleado = await consultarempleado(req) 
+
+
+    const citas = await consultarcitas(req, pk_cita);
+
+
+    res.render("./editar/editar_cita", {
+        data: citas[0],
+        qestados,
+        qempleado
+    });
+
+    async function consultarcitas(req, pk_cita) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                conn.query(
+                    `select * from cita where pk_cita = ${pk_cita}`,
+                    (err, citas) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(citas);
+                        }
+                    }
+                );
+            });
+        });
+    }
+    async function consultarMarca(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                    conn.query('SELECT * FROM estados', (err, testados) => {
+                            resolve(testados);
+                    });    
+            });
+        });
+    }
+    async function consultarempleado(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                    conn.query('SELECT * FROM empleado', (err, Templeados) => {
+                            resolve(Templeados);
+                    });    
+            });
+        });
+    }
    
 }
 controller.updatecita = (req, res) => {
@@ -946,7 +989,7 @@ controller.updatecita = (req, res) => {
     
     console.log('dato de cita a insertar: ', data)
     req.getConnection((err, conn)=>{
-        conn.query(`update cita set fecha_entrada = '${data.Fecha_Entrada}' , fecha_salida = '${data.Fecha_Salida}' , estado = '${data.Estado}' , foto = '${data.Foto}', fk_empleado = '${data.Empleado}' where pk_cita = ${pk_cita} `, (err, cita) => { //vehiculos hace referencia al resultado del query
+        conn.query(`update cita set estado = '${data.Estado}', fk_empleado = '${data.Empleado}' where pk_cita = ${pk_cita} `, (err, cita) => { //vehiculos hace referencia al resultado del query
             res.redirect('/citas')
         })
     })
@@ -971,7 +1014,7 @@ controller.listCitasCliente = (req, res) => {
         ct.fecha_entrada AS Entrada,
         ct.fecha_salida AS Salida,
         est.Descripcion AS Estado,
-        cz.presupuesto AS Presupuesto,
+        sr.precio AS Precio,
         ct.foto AS Foto,
         em.nombre AS Nombre 
         from cita ct 
@@ -979,6 +1022,7 @@ controller.listCitasCliente = (req, res) => {
         INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
         INNER JOIN estados est on ct.estado=est.pk_estados
         INNER JOIN vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo
+        INNER JOIN servicio sr on sr.pk_servicio = cz.fk_servicio
         WHERE Status = "N" AND vh.fk_cliente = ${userId};
         ` , (err, cita) => {
             if (err) {
@@ -1020,6 +1064,35 @@ controller.listBitacora = (req, res) => {
             }
             res.render('bitacora_cliente' , {  //renderiza en archivo vista cita
                 data: bitacora 
+            })
+        })
+    })
+}
+
+  //CONTROLADOR COTIZACION
+  controller.listCotizacionAdmin = (req, res) => {
+    const userId = req.session.userId;
+    console.log(userId);
+    req.getConnection((err, conn) =>{
+        conn.query(`SELECT 
+        cz.pk_cotizacion AS pk_cotizacion,
+        cz.kilometraje_cotizacion AS kilometraje_cotizacion,
+        sv.descripcion AS descripcion,
+        sv.precio AS Precio,
+        vh.placa AS placa,
+        cz.Est_Cotizacion AS Estado
+        from cotizacion cz 
+        INNER JOIN 
+        vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo 
+        INNER JOIN
+        servicio sv on cz.fk_servicio=sv.pk_servicio;
+        ` , (err, cotizaciones) => {
+            if (err) {
+                res.json(err)
+            }
+            console.log(cotizaciones)
+            res.render('cotizacionadmin' , {  //renderiza en archivo vista cotizacion
+                data: cotizaciones 
             })
         })
     })

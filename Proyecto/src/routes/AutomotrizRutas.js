@@ -78,14 +78,18 @@ router.get('/cotizacion/update/:pk_cotizacion', AutomotrizControler.editCotizaci
 router.post('/cotizacion/update/:pk_cotizacion', AutomotrizControler.updateCotizacion)
 router.get('/cotizacion/delete/:pk_cotizacion', AutomotrizControler.deleteCotizacion)
 
+//COTIZACION ADMIN
+router.get('/cotizacionadmin', AutomotrizControler.listCotizacionAdmin) 
+
 //RUTA DE CITAS
 router.get('/citas', AutomotrizControler.listcitas) //Ruta del API 
 router.post('/citas/add', AutomotrizControler.savecita)
 router.get('/citas/update/:pk_cita', AutomotrizControler.editcita)
 router.post('/citas/update/:pk_cita', AutomotrizControler.updatecita)
 router.get('/citas/delete/:pk_cita', AutomotrizControler.deletecita)
+
 //RUTA DE CITA CLIENTE
-router.get('/cita_cliente', AutomotrizControler.listCitasCliente)
+router.get('/citas_cliente', AutomotrizControler.listCitasCliente)
 //RUTA BITACORA CLIENTE
 router.get('/bitacora_cliente', AutomotrizControler.listBitacora)
 

@@ -17,6 +17,8 @@
                         <th>Precio</th>
                         <th>Placa</th>
                         <th>Estado</th>
+                        <th>Codigo</th>
+                        <th>Descripcion</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -31,6 +33,8 @@
                             <td><%= (data[i].Precio) %></td>
                             <td><%= (data[i].placa) %></td>
                             <td><%= (data[i].Estado) %></td>
+                            <td><%= (data[i].Codigo) %></td>
+                            <td><%= (data[i].Descripcion) %></td>
                             <td>
                                 <a href="cotizacion/delete/<%= data[i].pk_cotizacion %>" class="btn btn-danger">Borrar</a>
                                 <!--a href="cotizacion/update/<%= data[i].pk_cotizacion %>" class="btn btn-info">Modificar</a-->

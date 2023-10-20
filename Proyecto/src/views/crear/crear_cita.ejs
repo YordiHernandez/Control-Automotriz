@@ -17,7 +17,7 @@
                     <label for="cotizacion">Seleccione Placa de Vehículo:</label>
                     <select name="cotizacion" id="cotizacion" class="form-control" style="margin-bottom: 5px;">
                         <% for (const opcion of qcotizacion) { %>
-                            <option value="<%= opcion.pk_cotizacion %>"><%= opcion.placa %></option>
+                            <option value="<%= opcion.pk_cotizacion %>"><%= opcion.CODIGO %></option>
                         <% } %>
                     </select>
                 </div>

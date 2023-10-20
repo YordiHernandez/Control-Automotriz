@@ -823,7 +823,9 @@ controller.verSesion = (req, res) => {
         sv.descripcion AS descripcion,
         sv.precio AS Precio,
         vh.placa AS placa,
-        cz.Est_Cotizacion AS Estado
+        cz.Est_Cotizacion AS Estado,
+        cz.Codigo as Codigo,
+        cz.Descripcion as Descripcion
         from cotizacion cz 
         INNER JOIN 
         vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo 
@@ -845,7 +847,7 @@ controller.saveCotizacion = (req, res) => {
     
     console.log('dato de cotizacion a insertar: ', data)
     req.getConnection((err, conn)=>{ //borre presupuesto manual
-        conn.query(`insert into cotizacion(kilometraje_cotizacion, fk_servicio, fk_vehiculo) values (${data.kilometraje}, ${data.servicio}, ${data.vehiculo})`, (err, cotizacion) => { //vehiculos hace referencia al resultado del query
+        conn.query(`insert into cotizacion(kilometraje_cotizacion, fk_servicio, fk_vehiculo, descripcion) values (${data.kilometraje}, ${data.servicio}, ${data.vehiculo}, '${data.descripcion}')`, (err, cotizacion) => { //vehiculos hace referencia al resultado del query
             res.redirect('/cotizacion')
         })
     })

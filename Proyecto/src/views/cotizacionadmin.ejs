@@ -1,6 +1,6 @@
 <%- include ('partials/_header') -%>
 <div class="card border-light mb-4" style="max-width: 100%;">
-<div class="card-header">cotizacion</div>
+<div class="card-header">Solicitudes de Revision</div>
 <div class="card-body">
 <div class="container">
     <a href="/menu_admin" class="btn btn-info">Regresar</a>
@@ -11,11 +11,12 @@
                 <thead>
                     <tr>
                         <th>N.</th>
-                        <th>Kilometraje</th>
-                        <th>Servicio</th>
-                        <th>Presupuesto</th>
-                        <th>Placa</th>
+                        <th>Codigo</th>
+                        <th>Placa Vehiculo</th>
                         <th>Estado</th>
+                        <th>Descripcion</th>
+                        <th>Fecha Solicitada</th>
+                        <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -24,11 +25,26 @@
                         <tr>
                             <td><%= (i + 1)%></td>
                             <td style="display: none;"><%= (data[i].pk_cotizacion) %></td>
-                            <td><%= (data[i].kilometraje_cotizacion) %></td>
-                            <td><%= (data[i].descripcion) %></td>
-                            <td><%= (data[i].Precio) %></td>
+                            <td><%= (data[i].Codigo) %></td>
                             <td><%= (data[i].placa) %></td>
                             <td><%= (data[i].Estado) %></td>
+                            <td><%= (data[i].Descripcion) %></td>
+                            <td><%= (data[i].Fecha) %></td> 
+                            <% if (data[i].Estado.trim() === 'En Espera') { %>
+                            <td>
+                                <a href="cotizacionadmin/aceptar/<%= data[i].pk_cotizacion %>" class="btn btn-info">Aceptar</a>
+                                -
+                                <a href="cotizacionadmin/denegar/<%= data[i].pk_cotizacion %>" class="btn btn-danger">Denegar</a>
+                            </td>
+                            <% } else if (data[i].Estado.trim() === 'Aceptada'){ %>
+                                <td>
+                                    <a href="/cotizacionadmin/correoaceptado/<%= data[i].pk_cotizacion %>/<%= data[i].Codigo %>" class="btn btn-success">Enviar Notificación</a>
+                                  </td>
+                            <% } else { %>
+                                <td>
+                                    <a href="/cotizacionadmin/correodenegado/<%= data[i].pk_cotizacion %>/<%= data[i].Codigo %>" class="btn btn-warning">Enviar Notificación</a>
+                                </td>
+                            <% } %>
                         </tr>
                 <% } %>
                 <% } %>

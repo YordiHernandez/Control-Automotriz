@@ -5,6 +5,7 @@ const mysql = require('mysql')
 const mysql2 = require('mysql2')
 const myConnection = require('express-myconnection')
 const session = require('express-session')
+const nodemailer = require('nodemailer')
 
 //exportando rutas
 const automotrizRutas = require('./routes/AutomotrizRutas')
@@ -21,10 +22,24 @@ app.set('views', path.join(__dirname, 'views'));
 const configdb = {
     host: 'localhost',
     user: 'root',
-    password: 'Jm59460816',
+    password: '12345',
     port: 3306,
     database: 'automotriz',
 };
+
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth:{
+        user: 'tallereltridente@gmail.com',
+        pass: 'bilt qogr dqdw kzoz'
+    }
+})
+transporter.verify().then(()=>{
+    console.log('Email conectado')
+})
+
 
 app.use(session({
     secret: 'un_secreto',
@@ -32,9 +47,11 @@ app.use(session({
     saveUninitialized: true
 }))
 
+
 app.use(morgan('dev'));
 app.use(myConnection(mysql2, configdb, 'single'));
 app.use(express.urlencoded({extended: false}))
+
 
 
 //routes
@@ -102,13 +119,20 @@ async function consultarCliente(req) {
 //COTIZACION
 app.get('/crear_cotizacion' , async (req, res)=>{
     
+    const fechaActual = new Date();
+    const fechaminima = new Date(fechaActual);
+
+    // Calcular la fecha mínima (7 días antes de la fecha actual)
+    fechaminima.setHours(7,0,0);
+    const fechamaxima = new Date(fechaActual);
+    fechamaxima.setHours(20,0,0);
+    fechamaxima.setDate(fechaActual.getDate() + 7);
+
     const userId = req.session.userId;
 
     const qservicio = await consultarServicio(req) 
 
     const qvehiculo = await consultarVehiculo(req)
-
-    res.render('./crear/crear_cotizacion', { qservicio, qvehiculo });
 
 // Función para consultar las marcas
 async function consultarServicio(req) {
@@ -133,6 +157,21 @@ async function consultarVehiculo(req) {
     })
 }
 
+// Formatear las fechas en el formato requerido (YYYY-MM-DDThh:mm)
+const formatoFecha = (fecha) => {
+  const yyyy = fecha.getFullYear();
+  const mm = String(fecha.getMonth() + 1).padStart(2, '0');
+  const dd = String(fecha.getDate()).padStart(2, '0');
+  const hh = String(fecha.getHours()).padStart(2, '0');
+  const min = String(fecha.getMinutes()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+};
+
+// Variables para incrustar en el HTML
+const fechaMinimaFormateada = formatoFecha(fechaActual);
+const fechaMaximaFormateada = formatoFecha(fechamaxima);
+
+res.render('./crear/crear_cotizacion', { qservicio, qvehiculo, fechaMaximaFormateada, fechaMinimaFormateada});
 })
 
 //CITAS
@@ -146,11 +185,11 @@ app.get('/crear_cita' , async (req, res)=>{
 
     res.render('./crear/crear_cita', { qcotizacion, qempleado });
 
-// Función para consultar las marcas
+// Función para consultar 
 async function consultarCotizacion(req) {
     return new Promise((resolve, reject) => {
         req.getConnection((err, conn) => {
-                conn.query('SELECT * FROM cotizacion cz inner join vehiculo vh on vh.pk_vehiculo = cz.fk_vehiculo WHERE Est_Cotizacion = "En Espera"', 
+                conn.query('SELECT * FROM cotizacion cz inner join vehiculo vh on vh.pk_vehiculo = cz.fk_vehiculo WHERE Est_Cotizacion = "Aceptada"', 
                 (err, cotizacion) => {
                         resolve(cotizacion);
                 });    
@@ -225,4 +264,5 @@ app.listen(app.get('port'), ()=> {
     console.log('server on port 3000');
 })
 
-module.exports = app
+module.exports = {app , transporter}
+

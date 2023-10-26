@@ -80,6 +80,11 @@ router.get('/cotizacion/delete/:pk_cotizacion', AutomotrizControler.deleteCotiza
 
 //COTIZACION ADMIN
 router.get('/cotizacionadmin', AutomotrizControler.listCotizacionAdmin) 
+router.get('/cotizacionadmin/aceptar/:pk_cotizacion', AutomotrizControler.aceptarCotizacion)
+router.get('/cotizacionadmin/denegar/:pk_cotizacion', AutomotrizControler.denegarCotizacion)
+//CORREO
+router.get('/cotizacionadmin/correoaceptado/:pk_cotizacion/:CODIGO', AutomotrizControler.correoAceptado)
+router.get('/cotizacionadmin/correodenegado/:pk_cotizacion/:CODIGO', AutomotrizControler.correoDenegado)
 
 //RUTA DE CITAS
 router.get('/citas', AutomotrizControler.listcitas) //Ruta del API 

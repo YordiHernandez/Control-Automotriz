@@ -1,6 +1,6 @@
 <%- include ('partials/_header') -%>
 <div class="card border-light mb-4" style="max-width: 100%;">
-<div class="card-header">cotizacion</div>
+<div class="card-header">Mis Revisiones</div>
 <div class="card-body">
 <div class="container">
     <a href="/menu_user" class="btn btn-info">Regresar</a>
@@ -11,11 +11,11 @@
                 <thead>
                     <tr>
                         <th>N.</th>
-                        <th>Fecha Entrada</th>
-                        <th>Fecha Salida</th>
-                        <th>estado</th>
-                        <th>Precio</th>
-                        <th>Empleado</th>
+                        <th>Codigo Solicitud</th>
+                        <th>Empleado Asignado</th>
+                        <th>Presupuesto Revision</th>
+                        <th>Detalle</th>
+                        <th>Tiempo Estimado</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -24,15 +24,13 @@
                         <tr>
                             <td><%= (i + 1)%></td>
                             <td style="display: none;"><%= (data[i].pk_cita) %></td>
-                            <td><%= (data[i].Entrada) %></td>
-                            <td><%= (data[i].Salida) %></td>
-                            <td><%= (data[i].Estado) %></td>
-                            <td>Q.<%= (data[i].Precio) %></td>
-                            <td><%= (data[i].Nombre) %></td>
-                            <!--td>
-                                <a href="citas/delete/<%= data[i].pk_cita %>" class="btn btn-danger">Borrar</a>
-                                <a href="citas/update/<%= data[i].pk_cita %>" class="btn btn-info">Modificar</a>
-                            </td-->
+                            <td><%= (data[i].cotizacion) %></td>
+                            <td><%= (data[i].empleado) %></td>
+                            <td>Q. <%= (data[i].presupuesto) %></td>
+                            <td><%= (data[i].detalle) %></td>
+                            <td><%= (data[i].tiempo) %></td>
+                                <!--a href="citas/delete/<%= data[i].pk_cita %>" class="btn btn-danger">Borrar</a>
+                                <a href="citas/update/<%= data[i].pk_cita %>" class="btn btn-info">Modificar</a-->       
                         </tr>
                 <% } %>
                 <% } %>

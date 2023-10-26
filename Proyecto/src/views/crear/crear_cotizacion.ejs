@@ -4,37 +4,30 @@
 <div class="col-md-5" style="margin-left: 5px;">
     <div class="card bg-light ">
         <div class="card-body">
-            <div class="card-header">Ingresar Cotizacion</div>
+            <div class="card-header">Ingresar Solicitud</div>
             <form action="/cotizacion/add" method="post" style="padding: 5px;">
-                <div class="form-group">
-                    <input type="text" name="kilometraje" placeholder="Inserte kilometraje" class="form-control" style="margin-bottom: 5px;"/>
-                </div>
-                <div class="form-group">
-                    <!--input type="text" name="servicio" placeholder="Inserte Servicio" class="form-control" style="margin-bottom: 5px;"/-->
-                    <label for="servicio">Seleccione Servicio:</label>
-                    <select name="servicio" id="servicio" class="form-control" style="margin-bottom: 5px;">
-                        <% for (const opcion of qservicio) { %>
-                            <option value="<%= opcion.pk_servicio %>"><%= opcion.descripcion %></option>
-                        <% } %>
-                    </select>
-                </div>
                 <!--div class="form-group">
                     <input type="text" name="presupuesto" placeholder="Inserte Presupuesto" class="form-control" style="margin-bottom: 5px; display: none;"/>
                 </div-->
                 <div class="form-group">
                     <!--input type="text" name="vehiculo" placeholder="Inserte Vehiculo" class="form-control" style="margin-bottom: 5px;" /-->
                     <label for="vehiculo">Seleccione Vehiculo:</label>
-                    <select name="vehiculo" id="vehiculo" class="form-control" style="margin-bottom: 5px;">
+                    <select name="vehiculo" id="vehiculo" class="form-control" style="margin-bottom: 10px;">
                         <% for (const opcion of qvehiculo) { %>
                             <option value="<%= opcion.pk_vehiculo %>"><%= opcion.placa %></option>
                         <% } %>
                     </select>
                     <div class="form-group">
-                        <input type="text" name="descripcion" placeholder="Ingrese la descripcion del problema" class="form-control" style="margin-bottom: 5px;"/>
+                        <label for="fechaHora">Fecha y hora:</label>
+                        <input type="datetime-local" id="fechaHora" name="fechaHora" min="<%= fechaMinimaFormateada %>" max="<%= fechaMaximaFormateada %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcion">Describa el problema:</label>
+                        <textarea type="text" name="descripcion" class="form-control" style="margin-bottom: 5px;"></textarea>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary" style="margin-top: 5px;">
-                    Guardar Cotizacion
+                    Guardar Solicitud
                 </button>
         </div>
     </div>

@@ -1,5 +1,6 @@
 const { response } = require("express");
 const session = require('express-session');
+const nodemailer = require('nodemailer')
 
 const controller = {};
 
@@ -813,24 +814,20 @@ controller.verSesion = (req, res) => {
   }
 
   //CONTROLADOR COTIZACION
-  controller.listCotizacion = (req, res) => {
+controller.listCotizacion = (req, res) => {
     const userId = req.session.userId;
     console.log(userId);
     req.getConnection((err, conn) =>{
         conn.query(`SELECT 
         cz.pk_cotizacion AS pk_cotizacion,
-        cz.kilometraje_cotizacion AS kilometraje_cotizacion,
-        sv.descripcion AS descripcion,
-        sv.precio AS Precio,
         vh.placa AS placa,
         cz.Est_Cotizacion AS Estado,
         cz.Codigo as Codigo,
-        cz.Descripcion as Descripcion
+        cz.Descripcion as Descripcion,
+        DATE_FORMAT(cz.fecha_solicitud, '%Y-%m-%d %H:%i:%s') as Fecha
         from cotizacion cz 
         INNER JOIN 
         vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo 
-        INNER JOIN
-        servicio sv on cz.fk_servicio=sv.pk_servicio
         WHERE vh.fk_cliente = ${userId};` , (err, cotizaciones) => {
             if (err) {
                 res.json(err)
@@ -842,16 +839,23 @@ controller.verSesion = (req, res) => {
         })
     })
 }
+
 controller.saveCotizacion = (req, res) => {
     let data = req.body
-    
-    console.log('dato de cotizacion a insertar: ', data)
+
+    const fechaHoraString = data.fechaHora; // Asumiendo que data.fechaHora es una cadena válida
+    const fechaHoraDate = new Date(fechaHoraString);
+    const fechaHoraLocal = new Date(fechaHoraDate.getTime() - (fechaHoraDate.getTimezoneOffset() * 60000));
+    const fechaFormateada = fechaHoraLocal.toISOString().slice(0, 19).replace('T', ' ');
+    //const fechaFormateada = data.fechaHora.toISOString().slice(0,19).replace('T', ' ');
+    console.log('dato de cotizacion a insertar: ', data, 'y fecha: ', fechaFormateada)
     req.getConnection((err, conn)=>{ //borre presupuesto manual
-        conn.query(`insert into cotizacion(kilometraje_cotizacion, fk_servicio, fk_vehiculo, descripcion) values (${data.kilometraje}, ${data.servicio}, ${data.vehiculo}, '${data.descripcion}')`, (err, cotizacion) => { //vehiculos hace referencia al resultado del query
+        conn.query(`insert into cotizacion(fk_vehiculo, fecha_solicitud, Descripcion) values (${data.vehiculo},'${fechaFormateada}','${data.descripcion}')`, (err, cotizacion) => { //vehiculos hace referencia al resultado del query
             res.redirect('/cotizacion')
         })
     })
 }
+
 controller.editCotizacion = async (req, res) => {
 
     const {pk_cotizacion} = req.params
@@ -894,23 +898,19 @@ controller.listcitas = (req, res) => {
     req.getConnection((err, conn) =>{
         conn.query(`SELECT 
         ct.pk_cita,
-        ct.fecha_entrada AS Entrada,
-        ct.fecha_salida AS Salida,
-        est.descripcion AS Estado,
-        sr.precio AS Precio,
-        ct.foto AS Foto,
-        em.nombre AS Nombre 
+        cz.CODIGO as cotizacion,
+        em.nombre as empleado,
+        ct.presupuesto as presupuesto,
+        ct.detalle as detalle,
+        ct.tiempo_estimado as tiempo
         from cita ct 
         INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
         INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
-        INNER JOIN estados est on ct.estado=est.pk_estados
-        INNER JOIN servicio sr on sr.pk_servicio = cz.fk_servicio
         WHERE Status = "N";
         ` , (err, cita) => {
             if (err) {
                 res.json(err)
             }
-            console.log(cita)
             res.render('citas' , {  //renderiza en archivo vista cita
                 data: cita 
             })
@@ -924,7 +924,7 @@ controller.savecita = (req, res) => {
     
     console.log('dato de cita a insertar: ', data)
     req.getConnection((err, conn)=>{
-        conn.query(`INSERT INTO cita(fecha_entrada,fecha_salida,fk_cotizacion,fk_empleado) values ('${data.entrada}','${data.salida}',${data.cotizacion},${data.Empleado})`, (err, cita) => { //
+        conn.query(`INSERT INTO cita(fk_cotizacion, fk_empleado, presupuesto, detalle, tiempo_estimado) values (${data.cotizacion},${data.empleado},${data.presupuesto},'${data.detalle}', '${data.tiempo_estimado}')`, (err, cita) => { //
             res.redirect('/citas')
         })
     })
@@ -934,9 +934,9 @@ controller.editcita = async (req, res) => {
 
     const {pk_cita} = req.params
 
-    const qestados = await consultarMarca(req) 
-    
-    const qempleado = await consultarempleado(req) 
+    const qcotizacion = await consultarCotizacion(req) 
+
+    const qempleado = await consultarEmpleado(req) 
 
 
     const citas = await consultarcitas(req, pk_cita);
@@ -944,7 +944,7 @@ controller.editcita = async (req, res) => {
 
     res.render("./editar/editar_cita", {
         data: citas[0],
-        qestados,
+        qcotizacion,
         qempleado
     });
 
@@ -964,34 +964,37 @@ controller.editcita = async (req, res) => {
             });
         });
     }
-    async function consultarMarca(req) {
+
+    async function consultarCotizacion(req) {
         return new Promise((resolve, reject) => {
             req.getConnection((err, conn) => {
-                    conn.query('SELECT * FROM estados', (err, testados) => {
-                            resolve(testados);
+                    conn.query('SELECT * FROM cotizacion cz inner join vehiculo vh on vh.pk_vehiculo = cz.fk_vehiculo WHERE Est_Cotizacion = "Aceptada"', 
+                    (err, cotizacion) => {
+                            resolve(cotizacion);
                     });    
             });
         });
     }
-    async function consultarempleado(req) {
+
+    async function consultarEmpleado(req) {
+    
         return new Promise((resolve, reject) => {
             req.getConnection((err, conn) => {
-                    conn.query('SELECT * FROM empleado', (err, Templeados) => {
-                            resolve(Templeados);
-                    });    
+                    conn.query(`SELECT * FROM empleado`, (err, empleado) => {       
+                            resolve(empleado);
+                    });
             });
-        });
+        })
     }
-   
 }
+
 controller.updatecita = (req, res) => {
 
     const {pk_cita} = req.params
     let data = req.body
     
-    console.log('dato de cita a insertar: ', data)
     req.getConnection((err, conn)=>{
-        conn.query(`update cita set estado = '${data.Estado}', fk_empleado = '${data.Empleado}' where pk_cita = ${pk_cita} `, (err, cita) => { //vehiculos hace referencia al resultado del query
+        conn.query(`update cita set fk_cotizacion = ${data.cotizacion}, fk_empleado = ${data.empleado}, detalle = '${data.detalle}', presupuesto = ${data.presupuesto}, tiempo_estimado = '${data.tiempo_estimado}' where pk_cita = ${pk_cita} `, (err, cita) => { //vehiculos hace referencia al resultado del query
             res.redirect('/citas')
         })
     })
@@ -1013,18 +1016,15 @@ controller.listCitasCliente = (req, res) => {
     req.getConnection((err, conn) =>{
         conn.query(`SELECT 
         ct.pk_cita,
-        ct.fecha_entrada AS Entrada,
-        ct.fecha_salida AS Salida,
-        est.Descripcion AS Estado,
-        sr.precio AS Precio,
-        ct.foto AS Foto,
-        em.nombre AS Nombre 
+        cz.CODIGO as cotizacion,
+        em.nombre as empleado,
+        ct.presupuesto as presupuesto,
+        ct.detalle as detalle,
+        ct.tiempo_estimado as tiempo
         from cita ct 
         INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
         INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
-        INNER JOIN estados est on ct.estado=est.pk_estados
-        INNER JOIN vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo
-        INNER JOIN servicio sr on sr.pk_servicio = cz.fk_servicio
+        INNER JOIN vehiculo vh ON vh.pk_vehiculo = cz.fk_vehiculo
         WHERE Status = "N" AND vh.fk_cliente = ${userId};
         ` , (err, cita) => {
             if (err) {
@@ -1071,23 +1071,21 @@ controller.listBitacora = (req, res) => {
     })
 }
 
-  //CONTROLADOR COTIZACION
+  //CONTROLADOR COTIZACION ADMIN
   controller.listCotizacionAdmin = (req, res) => {
     const userId = req.session.userId;
     console.log(userId);
     req.getConnection((err, conn) =>{
         conn.query(`SELECT 
         cz.pk_cotizacion AS pk_cotizacion,
-        cz.kilometraje_cotizacion AS kilometraje_cotizacion,
-        sv.descripcion AS descripcion,
-        sv.precio AS Precio,
         vh.placa AS placa,
-        cz.Est_Cotizacion AS Estado
+        cz.Est_Cotizacion AS Estado,
+        cz.Codigo as Codigo,
+        cz.Descripcion as Descripcion,
+        DATE_FORMAT(cz.fecha_solicitud, '%Y-%m-%d %H:%i:%s') as Fecha
         from cotizacion cz 
         INNER JOIN 
-        vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo 
-        INNER JOIN
-        servicio sv on cz.fk_servicio=sv.pk_servicio;
+        vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo;
         ` , (err, cotizaciones) => {
             if (err) {
                 res.json(err)
@@ -1098,6 +1096,89 @@ controller.listBitacora = (req, res) => {
             })
         })
     })
+}
+
+controller.aceptarCotizacion = (req, res) => {
+
+    const {pk_cotizacion} = req.params
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`update cotizacion set Est_Cotizacion = 'Aceptada' where pk_cotizacion = ${pk_cotizacion} `, (err, cotizaciones) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/cotizacionadmin')
+        })
+    })
+}
+
+controller.denegarCotizacion = (req, res) => {
+
+    const {pk_cotizacion} = req.params
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`update cotizacion set Est_Cotizacion = 'Denegada' where pk_cotizacion = ${pk_cotizacion} `, (err, cotizaciones) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/cotizacionadmin')
+        })
+    })
+}
+
+//ENVIO DE CORREOS COTIZACION ADMIN
+controller.correoAceptado = async ( req, res) => {
+
+    const {CODIGO} = req.params
+    const {pk_cotizacion} = req.params
+
+    const qcorreo = await consultarCorreo(req);
+
+    const {transporter} = require('../app')
+    await transporter.sendMail( {
+        from: 'tallereltridente@gmail.com',
+        to: qcorreo[0].correo,
+        subject: 'Su Cotizacion a sido aceptada',
+        text: `Gracias por elegir nuestro servicio, su cotizacion ->${CODIGO}<- a sido aceptada`
+    }); //si quiero enviar variables sera en html en vez de text
+    res.redirect('/cotizacionadmin')
+
+    async function consultarCorreo(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                    conn.query(`select cl.correo FROM cotizacion cz 
+                    INNER JOIN vehiculo ve ON ve.pk_vehiculo = cz.fk_vehiculo 
+                    INNER JOIN cliente cl ON cl.pk_cliente = ve.fk_cliente
+                    WHERE cz.pk_cotizacion = ${pk_cotizacion};`, (err, correo) => {
+                            resolve(correo);
+                    });    
+            });
+        });
+    }
+}
+
+controller.correoDenegado = async ( req, res) => {
+
+    const {CODIGO} = req.params
+    const {pk_cotizacion} = req.params
+
+    const qcorreo = await consultarCorreo(req);
+
+    const {transporter} = require('../app')
+    await transporter.sendMail( {
+        from: 'tallereltridente@gmail.com',
+        to: qcorreo[0].correo,
+        subject: 'Su Cotizacion a sido aceptada',
+        text: `Gracias por elegir nuestro servicio, su cotizacion ->${CODIGO}<- a sido denegada`
+    }); //si quiero enviar variables sera en html en vez de text
+    res.redirect('/cotizacionadmin')
+
+    async function consultarCorreo(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                    conn.query(`select cl.correo FROM cotizacion cz 
+                    INNER JOIN vehiculo ve ON ve.pk_vehiculo = cz.fk_vehiculo 
+                    INNER JOIN cliente cl ON cl.pk_cliente = ve.fk_cliente
+                    WHERE cz.pk_cotizacion = ${pk_cotizacion};`, (err, correo) => {
+                            resolve(correo);
+                    });    
+            });
+        });
+    }
 }
 
 module.exports = controller

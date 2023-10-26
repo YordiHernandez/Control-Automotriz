@@ -1,10 +1,10 @@
 <%- include ('partials/_header') -%>
 <div class="card border-light mb-4" style="max-width: 100%;">
-<div class="card-header">cotizacion</div>
+<div class="card-header">Solicitudes de Revision</div>
 <div class="card-body">
 <div class="container">
     <a href="/menu_user" class="btn btn-info">Regresar</a>
-    <a href="/crear_cotizacion" class="btn btn-success">Crear Cotizacion</a>
+    <a href="/crear_cotizacion" class="btn btn-success">Crear Solicitud Revision</a>
     <hr>
     <div class="row mt-1">
         <div class="col-md-12">
@@ -12,14 +12,11 @@
                 <thead>
                     <tr>
                         <th>N.</th>
-                        <th>Kilometraje</th>
-                        <th>Servicio</th>
-                        <th>Precio</th>
-                        <th>Placa</th>
-                        <th>Estado</th>
                         <th>Codigo</th>
+                        <th>Placa Vehiculo</th>
+                        <th>Estado</th>
                         <th>Descripcion</th>
-                        <th>Opciones</th>
+                        <th>Fecha Solicitada</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,17 +25,15 @@
                         <tr>
                             <td><%= (i + 1)%></td>
                             <td style="display: none;"><%= (data[i].pk_cotizacion) %></td>
-                            <td><%= (data[i].kilometraje_cotizacion) %></td>
-                            <td><%= (data[i].descripcion) %></td>
-                            <td><%= (data[i].Precio) %></td>
+                            <td><%= (data[i].Codigo) %></td>
                             <td><%= (data[i].placa) %></td>
                             <td><%= (data[i].Estado) %></td>
-                            <td><%= (data[i].Codigo) %></td>
                             <td><%= (data[i].Descripcion) %></td>
-                            <td>
-                                <a href="cotizacion/delete/<%= data[i].pk_cotizacion %>" class="btn btn-danger">Borrar</a>
+                            <td><%= (data[i].Fecha) %></td> 
+                            
+                                <!--a href="cotizacion/delete/<%= data[i].pk_cotizacion %>" class="btn btn-danger">Borrar</a-->
                                 <!--a href="cotizacion/update/<%= data[i].pk_cotizacion %>" class="btn btn-info">Modificar</a-->
-                            </td>
+                            
                         </tr>
                 <% } %>
                 <% } %>

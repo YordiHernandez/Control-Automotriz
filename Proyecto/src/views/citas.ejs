@@ -17,6 +17,8 @@
                         <th>Presupuesto Revision</th>
                         <th>Detalle</th>
                         <th>Tiempo Estimado</th>
+                        <th>Estado</th>
+                        <th>Imagen</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -31,6 +33,8 @@
                             <td>Q. <%= (data[i].presupuesto) %></td>
                             <td><%= (data[i].detalle) %></td>
                             <td><%= (data[i].tiempo) %></td>
+                            <td><%= (data[i].estado) %></td>
+                            <td><img src="/uploads/<%= (data[i].foto) %>" style="width: 100%; height: 70%;" alt="<%= (data[i].foto) %>"></td>
                             <td>
                                 <a href="citas/delete/<%= data[i].pk_cita %>" class="btn btn-danger">Borrar</a>
                                 <a href="citas/update/<%= data[i].pk_cita %>" class="btn btn-info">Modificar</a>

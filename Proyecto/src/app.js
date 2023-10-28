@@ -6,19 +6,23 @@ const mysql2 = require('mysql2')
 const myConnection = require('express-myconnection')
 const session = require('express-session')
 const nodemailer = require('nodemailer')
+const multer = require('multer');
+const expressBusboy = require('express-busboy')
 
 //exportando rutas
 const automotrizRutas = require('./routes/AutomotrizRutas')
 
-
 const app = express();
 
 // settings
+
 app.set('port', process.env.PORT || 3000)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 //middlewares
+
+
 const configdb = {
     host: 'localhost',
     user: 'root',
@@ -40,19 +44,23 @@ transporter.verify().then(()=>{
     console.log('Email conectado')
 })
 
-
+app.use(morgan('dev'));
 app.use(session({
     secret: 'un_secreto',
     resave: false,
     saveUninitialized: true
 }))
 
-
-app.use(morgan('dev'));
 app.use(myConnection(mysql2, configdb, 'single'));
+app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
+const storage = multer.memoryStorage(/*{filename: (req, file, cb) =>{
+    cb(null, file.originalname);
+}}*/); // O usa el almacenamiento adecuado para tu caso
+const upload = multer({ storage: storage });
 
+//app.use(upload.single('archivo')); 
 
 //routes
 app.use('/', automotrizRutas)
@@ -258,6 +266,7 @@ async function consultarCliente(req) {
 
 //static files
 app.use(express.static(path.join(__dirname, '../public')))
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 //starting server
 app.listen(app.get('port'), ()=> {

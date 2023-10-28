@@ -1,6 +1,16 @@
 const express = require('express');
 const router = express.Router();
 
+const multer = require('multer'); // Importa multer
+
+const storage = multer.diskStorage({
+    destination: './uploads/', // Directorio donde se guardarán los archivos
+    filename: (req, file, cb) => {
+      cb(null, file.originalname); // Usa el nombre original del archivo
+    }
+  });
+  
+  const upload = multer({ storage: storage });
 
 const AutomotrizControler = require('../controllers/AutomotrizControler');
 const { randomBytes } = require('crypto');
@@ -38,7 +48,8 @@ router.get('/tipoV/delete/:pk_tipo', AutomotrizControler.deleteTipoV)
 
 //RUTA DE CLIENTES
 router.get('/cliente', AutomotrizControler.listCliente)
-router.post('/cliente/add', AutomotrizControler.saveCliente)
+//router.post('/cliente/add', AutomotrizControler.saveCliente)
+router.post('/citas/add', upload.single('archivo'), AutomotrizControler.savecita);
 router.get('/cliente/update/:pk_cliente', AutomotrizControler.editCliente)
 router.post('/cliente/update/:pk_cliente', AutomotrizControler.updateCliente)
 router.get('/cliente/delete/:pk_cliente', AutomotrizControler.deleteCliente)
@@ -88,7 +99,8 @@ router.get('/cotizacionadmin/correodenegado/:pk_cotizacion/:CODIGO', AutomotrizC
 
 //RUTA DE CITAS
 router.get('/citas', AutomotrizControler.listcitas) //Ruta del API 
-router.post('/citas/add', AutomotrizControler.savecita)
+//router.post('/citas/add', AutomotrizControler.savecita)
+router.post('/citas/add', upload.single('archivo'), AutomotrizControler.savecita);
 router.get('/citas/update/:pk_cita', AutomotrizControler.editcita)
 router.post('/citas/update/:pk_cita', AutomotrizControler.updatecita)
 router.get('/citas/delete/:pk_cita', AutomotrizControler.deletecita)

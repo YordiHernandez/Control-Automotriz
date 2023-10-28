@@ -1,6 +1,7 @@
 const { response } = require("express");
 const session = require('express-session');
 const nodemailer = require('nodemailer')
+const multer = require('multer');
 
 const controller = {};
 
@@ -902,7 +903,9 @@ controller.listcitas = (req, res) => {
         em.nombre as empleado,
         ct.presupuesto as presupuesto,
         ct.detalle as detalle,
-        ct.tiempo_estimado as tiempo
+        ct.tiempo_estimado as tiempo,
+        ct.estado,
+        ct.file_name as foto
         from cita ct 
         INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
         INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
@@ -919,15 +922,23 @@ controller.listcitas = (req, res) => {
 }
 
 controller.savecita = (req, res) => {
-    const userId = req.session.userId;
-    let data = req.body
-    
-    console.log('dato de cita a insertar: ', data)
+    console.log('Entrar a funcion');
+    const data = req.body;
+    const archivo = req.file;
+    const nombreArchivo = archivo.originalname;
+    if (!archivo) {
+        // Manejar el caso en el que no se suba un archivo
+        return res.status(400).send('Debes seleccionar un archivo.');
+      }
+    console.log('archivo: ', archivo)
+    console.log('nombre de archivo: ', nombreArchivo)
+
     req.getConnection((err, conn)=>{
-        conn.query(`INSERT INTO cita(fk_cotizacion, fk_empleado, presupuesto, detalle, tiempo_estimado) values (${data.cotizacion},${data.empleado},${data.presupuesto},'${data.detalle}', '${data.tiempo_estimado}')`, (err, cita) => { //
+        conn.query(`INSERT INTO cita(fk_cotizacion, fk_empleado, presupuesto, detalle, tiempo_estimado, file_name) values (${data.cotizacion},${data.empleado},${data.presupuesto},'${data.detalle}', '${data.tiempo_estimado}', '${nombreArchivo}')`, (err, cita) => { //
             res.redirect('/citas')
         })
     })
+    console.log('Datos a enviar: ', req.body)
 }
 
 controller.editcita = async (req, res) => {

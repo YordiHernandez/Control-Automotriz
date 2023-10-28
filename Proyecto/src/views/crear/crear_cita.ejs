@@ -1,15 +1,15 @@
 <%- include ('../partials/_header') -%>
-
+<a href="/citas" class="btn btn-danger">Cancelar</a>
 <div class="row mt-1">
 <div class="col-md-5" style="margin-left: 5px;">
     <div class="card bg-light ">
         <div class="card-body">
             <div class="card-header">Registrar Revision</div>
-            <form action="/citas/add" method="post" style="padding: 5px;">
+            <form action="/citas/add" method="post" enctype="multipart/form-data" style="padding: 5px;">
                 <div class="form-group">
                     <!--input type="text" name="cotizacion" placeholder="Inserte No. Cotizacion" class="form-control" style="margin-bottom: 5px;"/-->
-                    <label for="cotizacion">Seleccione codigo de cotizacion:</label>
-                    <select name="cotizacion" id="cotizacion" class="form-control" style="margin-bottom: 5px;">
+                    <label for="cotizacion">Seleccione Codigo de cotizacion:</label>
+                    <select name="cotizacion" class="form-control" style="margin-bottom: 5px;">
                         <% for (const opcion of qcotizacion) { %>
                             <option value="<%= opcion.pk_cotizacion %>"><%= opcion.CODIGO %></option>
                         <% } %>
@@ -18,7 +18,7 @@
                 <div class="form-group">
                     <!--input type="text" name="Empleado" placeholder="Inserte Empleado" class="form-control" style="margin-bottom: 5px;" /-->
                     <label for="empleado">Seleccione Empleado:</label>
-                    <select name="empleado" id="empleado" class="form-control" style="margin-bottom: 5px;">
+                    <select name="empleado" class="form-control" style="margin-bottom: 5px;">
                         <% for (const opcion of qempleado) { %>
                             <option value="<%= opcion.pk_empleado %>"><%= opcion.nombre %></option>
                         <% } %>
@@ -35,12 +35,16 @@
                 <div class="form-group">
                     <input type="text" name="tiempo_estimado" placeholder="Inserte tiempo estimado" class="form-control" style="margin-bottom: 5px;" />
                 </div>
+                <div class="form-group">
+                    <label for="archivo">Selecciona un archivo:</label>
+                    <input type="file" name="archivo" accept=".pdf, .jpg, .jpeg, .png" />
+                </div>
                 <button type="submit" class="btn btn-primary" style="margin-top: 5px;">
                     Guardar Cita
                 </button>
+            </form>
         </div>
     </div>
-    </form>
 </div>
 
 <%- include ('../partials/_footer') -%>

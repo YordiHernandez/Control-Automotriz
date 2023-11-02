@@ -16,6 +16,8 @@
                         <th>Presupuesto Revision</th>
                         <th>Detalle</th>
                         <th>Tiempo Estimado</th>
+                        <th>Imagen</th>
+                        <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,8 +31,30 @@
                             <td>Q. <%= (data[i].presupuesto) %></td>
                             <td><%= (data[i].detalle) %></td>
                             <td><%= (data[i].tiempo) %></td>
-                                <!--a href="citas/delete/<%= data[i].pk_cita %>" class="btn btn-danger">Borrar</a>
-                                <a href="citas/update/<%= data[i].pk_cita %>" class="btn btn-info">Modificar</a-->       
+                            <td><img src="/uploads/<%= (data[i].imagen) %>" style="width: 60%; height: 60%;" alt="<%= (data[i].foto) %>"></td>
+                            <% if (data[i].estado.trim() === 'En Espera') { %>
+                                <td>
+                                    <a href="cita_cliente/aceptar/<%= data[i].pk_cita %>" class="btn btn-info">Aceptar</a>
+                                    -
+                                    <a href="cita_cliente/denegar/<%= data[i].pk_cita %>" class="btn btn-danger">Denegar</a>
+                                </td>
+                                <% } else if (data[i].estado.trim() === 'Aceptada'){ %>
+                                    <td>
+                                        <!--a href="/cotizacionadmin/correoaceptado/<%= data[i].pk_cotizacion %>/<%= data[i].Codigo %>" class="btn btn-success">Enviar Notificación</a-->
+                                        <p>Cita Aceptada</p>
+                                        <p>Revisar Mantenimientos</p>
+                                      </td>
+                                <% } else if (data[i].estado.trim() === 'Denegada')  { %>
+                                    <td>
+                                        <!--a href="/cotizacionadmin/correodenegado/<%= data[i].pk_cotizacion %>/<%= data[i].Codigo %>" class="btn btn-warning">Enviar Notificación</a-->
+                                        <p>Cita Denegada</p>
+                                        <p>Gracias por elegir nuestro servicio</p>
+                                    </td>
+                                <% } else { %>
+                                    <td>
+                                        <p>El vehiculo a sido ingresado a Mantenimiento</p>
+                                    </td>
+                                <% } %>      
                         </tr>
                 <% } %>
                 <% } %>

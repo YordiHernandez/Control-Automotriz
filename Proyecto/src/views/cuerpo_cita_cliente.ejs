@@ -1,6 +1,6 @@
 <%- include ('partials/_header') -%>
 <div class="card border-light mb-4" style="max-width: 100%;">
-<div class="card-header">cotizacion</div>
+<div class="card-header">Revision de Vehiculos</div>
 <div class="card-body">
 <div class="container">
     <a href="/menu_user" class="btn btn-info">Regresar</a>
@@ -11,10 +11,11 @@
                 <thead>
                     <tr>
                         <th>N.</th>
-                        <th>Fecha Entrada</th>
-                        <th>Fecha Salida</th>
-                        <th>Placa Vehiculo</th>
+                        <th>Codigo Solicitud</th>
                         <th>Servicio</th>
+                        <th>Detalle</th>
+                        <th>Estado</th>
+                        <th>Imagen</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -22,11 +23,12 @@
                     <% for (var i = 0; i < data.length; i++) { %>
                         <tr>
                             <td><%= (i + 1)%></td>
-                            <td style="display: none;"><%= (data[i].pk_cita) %></td>
-                            <td><%= (data[i].fecha_entrada) %></td>
-                            <td><%= (data[i].fecha_salida) %></td>
-                            <td><%= (data[i].placa) %></td>
+                            <td style="display: none;"><%= (data[i].pk_cuerpo) %></td>
+                            <td><%= (data[i].cotizacion) %></td>
                             <td><%= (data[i].servicio) %></td>
+                            <td><%= (data[i].detalle) %></td>
+                            <td><%= (data[i].estado) %></td>
+                            <td><img src="/uploads/<%= (data[i].imagen) %>" style="width: 100%; height: 70%;" alt="<%= (data[i].foto) %>"></td>
                         </tr>
                 <% } %>
                 <% } %>

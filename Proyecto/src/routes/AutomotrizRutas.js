@@ -104,9 +104,21 @@ router.post('/citas/add', upload.single('archivo'), AutomotrizControler.savecita
 router.get('/citas/update/:pk_cita', AutomotrizControler.editcita)
 router.post('/citas/update/:pk_cita', AutomotrizControler.updatecita)
 router.get('/citas/delete/:pk_cita', AutomotrizControler.deletecita)
+//CUERPO DE CITA
+router.get('/cuerpo_cita', AutomotrizControler.listCuerpoCita)
+router.get('/cuerpo_cita/:pk_cita', AutomotrizControler.preSaveCuerpoCita)
+router.post('/cuerpo_cita/add', upload.single('archivo'), AutomotrizControler.saveCuerpoCita)
+router.get('/cuerpo_cita/reparacion/:pk_cuerpo', AutomotrizControler.cuerpoCitaRepacion)
+router.get('/cuerpo_cita/procesopago/:pk_cuerpo', AutomotrizControler.cuerpoCitaPago)
+
+//CLIENTE
+router.get('/cuerpo_cita_cliente', AutomotrizControler.listCuerpoCitaCliente)
 
 //RUTA DE CITA CLIENTE
 router.get('/citas_cliente', AutomotrizControler.listCitasCliente)
+router.get('/cita_cliente/aceptar/:pk_cita', AutomotrizControler.aceptarCita)
+router.get('/cita_cliente/denegar/:pk_cita', AutomotrizControler.denegarCita)
+
 //RUTA BITACORA CLIENTE
 router.get('/bitacora_cliente', AutomotrizControler.listBitacora)
 

@@ -35,10 +35,24 @@
                             <td><%= (data[i].tiempo) %></td>
                             <td><%= (data[i].estado) %></td>
                             <td><img src="/uploads/<%= (data[i].foto) %>" style="width: 100%; height: 70%;" alt="<%= (data[i].foto) %>"></td>
-                            <td>
-                                <a href="citas/delete/<%= data[i].pk_cita %>" class="btn btn-danger">Borrar</a>
-                                <a href="citas/update/<%= data[i].pk_cita %>" class="btn btn-info">Modificar</a>
-                            </td>
+                                <% if (data[i].estado.trim() === 'En Espera') { %>
+                                    <td>
+                                        <a href="citas/delete/<%= data[i].pk_cita %>" class="btn btn-danger">Borrar</a>
+                                        <a href="citas/update/<%= data[i].pk_cita %>" class="btn btn-info">Modificar</a>
+                                    </td>
+                                <% } else if (data[i].estado.trim() === 'Aceptada') {%>
+                                <td>
+                                    <a href="/cuerpo_cita/<%= data[i].pk_cita %>" class="btn btn-warning">Crear Mantenimiento</a>
+                                </td>
+                                <% } else if (data[i].estado.trim() === 'Denegada') {%> 
+                                <td>
+                                    <p>La Cita no ha sido aceptada por el cliente</p>
+                                </td>
+                                <% } else if (data[i].estado.trim() === 'Ingresado') {%>
+                                    <td>
+                                        <p>Vehiculo ingresado</p>
+                                    </td>
+                                <% } %>
                         </tr>
                 <% } %>
                 <% } %>

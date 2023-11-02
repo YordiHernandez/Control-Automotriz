@@ -40,9 +40,13 @@
                                 <td>
                                     <a href="/cotizacionadmin/correoaceptado/<%= data[i].pk_cotizacion %>/<%= data[i].Codigo %>" class="btn btn-success">Enviar Notificación</a>
                                   </td>
-                            <% } else { %>
+                            <% } else if (data[i].Estado.trim() === 'Denegada')  { %>
                                 <td>
                                     <a href="/cotizacionadmin/correodenegado/<%= data[i].pk_cotizacion %>/<%= data[i].Codigo %>" class="btn btn-warning">Enviar Notificación</a>
+                                </td>
+                            <% } else { %>
+                                <td>
+                                    <p>Revisar Citas</p>
                                 </td>
                             <% } %>
                         </tr>

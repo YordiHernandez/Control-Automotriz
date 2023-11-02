@@ -1031,7 +1031,9 @@ controller.listCitasCliente = (req, res) => {
         em.nombre as empleado,
         ct.presupuesto as presupuesto,
         ct.detalle as detalle,
-        ct.tiempo_estimado as tiempo
+        ct.tiempo_estimado as tiempo,
+        ct.estado as estado,
+        ct.file_name as imagen
         from cita ct 
         INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
         INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
@@ -1050,6 +1052,157 @@ controller.listCitasCliente = (req, res) => {
     })
 }
 
+controller.aceptarCita = (req, res) => {
+
+    const {pk_cita} = req.params
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`update cita set estado = 'Aceptada' where pk_cita = ${pk_cita} `, (err, cotizaciones) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/citas_cliente')
+        })
+    })
+}
+
+controller.denegarCita = (req, res) => {
+
+    const {pk_cita} = req.params
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`update cita set estado = 'Denegada' where pk_cita = ${pk_cita} `, (err, cotizaciones) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/citas_cliente')
+        })
+    })
+}
+
+//CUERPO DE CITA
+controller.listCuerpoCita = (req, res) => {
+    req.getConnection((err, conn) =>{
+        conn.query(`SELECT 
+        cc.pk_cuerpo AS pk_cuerpo,
+        cc.fk_cita AS cita,
+        cc.fk_servicio AS fk_servicio,
+        se.descripcion  as servicio,
+        co.CODIGO as cotizacion,
+        cc.detalle as detalle,
+        cc.estado as estado,
+        cc.file_name as imagen
+        from cuerpo_cita cc
+        INNER JOIN 
+        servicio se on se.pk_servicio = cc.fk_servicio
+        INNER JOIN
+        cita ci on ci.pk_cita = cc.fk_cita
+        INNER JOIN
+        cotizacion co on co.pk_cotizacion = ci.fk_cotizacion
+        WHERE cc.estado != 'Finalizado';
+        ` , (err, cuerpo_cita) => {
+            if (err) {
+                res.json(err)
+                return;
+            }
+            console.log(cuerpo_cita)
+            res.render('cuerpo_cita' , {  //renderiza en archivo vista cita
+                data: cuerpo_cita 
+            })
+        })
+    })
+}
+controller.preSaveCuerpoCita = async (req, res) => {
+    const {pk_cita} = req.params
+
+    const qServicio = await consultarServicio(req) 
+
+    res.render("./crear/crear_cuerpo_cita", {
+        pk_cita,
+        qServicio
+    });
+
+    async function consultarServicio(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                    conn.query(`SELECT * FROM servicio`, (err, servicio) => {       
+                            resolve(servicio);
+                    });
+            });
+        })
+    }
+}
+controller.saveCuerpoCita = (req, res) => {
+    console.log('Entrar a funcion');
+    const data = req.body;
+    const archivo = req.file;
+    const nombreArchivo = archivo.originalname;
+    if (!archivo) {
+        // Manejar el caso en el que no se suba un archivo
+        return res.status(400).send('Debes seleccionar un archivo.');
+      }
+    console.log('archivo: ', archivo)
+    console.log('nombre de archivo: ', nombreArchivo)
+
+    req.getConnection((err, conn)=>{
+        conn.query(`INSERT INTO cuerpo_cita(fk_cita, fk_servicio, detalle, file_name) values (${data.cita},${data.servicio}, '${data.detalle}' , '${nombreArchivo}')`, (err, cuerpo_cita) => { //
+            res.redirect('/cuerpo_cita')
+        })
+    })
+    console.log('Datos a enviar: ', req.body)
+}
+controller.cuerpoCitaRepacion = (req, res) => {  
+    const {pk_cuerpo} = req.params
+
+    req.getConnection((err, conn)=>{
+        conn.query(`update cuerpo_cita set estado = 'En Reparacion' where pk_cuerpo = ${pk_cuerpo};`, (err, cuerpo_cita) => { //
+            res.redirect('/cuerpo_cita')
+        })
+    }) 
+}
+controller.cuerpoCitaPago = (req, res) => {  
+    const {pk_cuerpo} = req.params
+
+    req.getConnection((err, conn)=>{
+        conn.query(`update cuerpo_cita set estado = 'Proceder a Pago' where pk_cuerpo = ${pk_cuerpo};`, (err, cuerpo_cita) => { //
+            res.redirect('/cuerpo_cita')
+        })
+    }) 
+}
+
+
+//CUERPO DE CITA CLIENTE
+controller.listCuerpoCitaCliente = (req, res) => {
+    const userId = req.session.userId;
+    req.getConnection((err, conn) =>{
+        conn.query(`
+        SELECT 
+                cc.pk_cuerpo AS pk_cuerpo,
+                cc.fk_cita AS cita,
+                cc.fk_servicio AS fk_servicio,
+                se.descripcion  as servicio,
+                co.CODIGO as cotizacion,
+                cc.detalle as detalle,
+                cc.estado as estado,
+                cc.file_name as imagen
+                from cuerpo_cita cc
+                INNER JOIN 
+                servicio se on se.pk_servicio = cc.fk_servicio
+                INNER JOIN
+                cita ci on ci.pk_cita = cc.fk_cita
+                INNER JOIN
+                cotizacion co on co.pk_cotizacion = ci.fk_cotizacion
+                INNER JOIN 
+                vehiculo ve on ve.pk_vehiculo = co.fk_vehiculo
+                WHERE ve.fk_cliente = ${userId} AND cc.estado != 'Finalizado';
+        ` , (err, cuerpo_cita) => {
+            if (err) {
+                res.json(err)
+                return;
+            }
+            console.log(cuerpo_cita)
+            res.render('cuerpo_cita_cliente' , {  //renderiza en archivo vista cita
+                data: cuerpo_cita 
+            })
+        })
+    })
+}
+
+//bitacora cliente
 controller.listBitacora = (req, res) => {
     const userId = req.session.userId;
     req.getConnection((err, conn) =>{
@@ -1191,5 +1344,7 @@ controller.correoDenegado = async ( req, res) => {
         });
     }
 }
+
+
 
 module.exports = controller

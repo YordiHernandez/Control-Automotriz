@@ -1,0 +1,37 @@
+<%- include ('../partials/_header') -%>
+<a href="/citas" class="btn btn-danger">Cancelar</a>
+<div class="row mt-1">
+<div class="col-md-5" style="margin-left: 5px;">
+    <div class="card bg-light ">
+        <div class="card-body">
+            <div class="card-header">Registrar Mantenimiento</div>
+            <form action="/cuerpo_cita/add" method="post" enctype="multipart/form-data" style="padding: 5px;">
+                <div class="form-group">
+                    <input type="number" name="cita" value="<%= pk_cita %>" class="form-control" style="margin-bottom: 5px; display: none;" readonly />
+                </div>
+                <div class="form-group">
+                    <!--input type="text" name="cotizacion" placeholder="Inserte No. Cotizacion" class="form-control" style="margin-bottom: 5px;"/-->
+                    <label for="servicio">Seleccione Servicio:</label>
+                    <select name="servicio" class="form-control" style="margin-bottom: 5px;">
+                        <% for (const opcion of qServicio) { %>
+                            <option value="<%= opcion.pk_servicio %>"><%= opcion.descripcion %></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Describa el Mantenimiento:</label>
+                    <textarea type="text" name="detalle" class="form-control" style="margin-bottom: 5px;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="archivo">Selecciona un archivo:</label>
+                    <input type="file" name="archivo" accept=".pdf, .jpg, .jpeg, .png" />
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 5px;">
+                    Guardar Cita
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include ('../partials/_footer') -%>

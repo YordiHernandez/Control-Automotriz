@@ -1,0 +1,52 @@
+<%- include ('partials/_header') -%>
+<div class="card border-light mb-4" style="max-width: 100%;">
+<div class="card-header">Revision</div>
+<div class="card-body">
+<div class="container">
+    <a href="/menu_admin" class="btn btn-info">Regresar</a>
+    <hr>
+    <div class="row mt-1">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>N.</th>
+                        <th>Codigo Solicitud</th>
+                        <th>Servicio</th>
+                        <th>Detalle</th>
+                        <th>Estado</th>
+                        <th>Imagen</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <% if (data) { %>
+                    <% for (var i = 0; i < data.length; i++) { %>
+                        <tr>
+                            <td><%= (i + 1)%></td>
+                            <td style="display: none;"><%= (data[i].pk_cuerpo) %></td>
+                            <td><%= (data[i].cotizacion) %></td>
+                            <td><%= (data[i].servicio) %></td>
+                            <td><%= (data[i].detalle) %></td>
+                            <td><%= (data[i].estado) %></td>
+                            <td><img src="/uploads/<%= (data[i].imagen) %>" style="width: 100%; height: 70%;" alt="<%= (data[i].foto) %>"></td>
+                            <% if (data[i].estado.trim() === 'Ingresado') { %>
+                                <td>
+                                    <a href="/cuerpo_cita/reparacion/<%= data[i].pk_cuerpo %>" class="btn btn-info">Reparacion</a>
+                                </td>
+                                <% } else if (data[i].estado.trim() === 'En Reparacion') {%>
+                                    <td>
+                                    <a href="/cuerpo_cita/procesopago/<%= data[i].pk_cuerpo %>" class="btn btn-info">Proceder a pago</a>
+                                   </td> 
+                                <% } %>
+                        </tr>
+                <% } %>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<%- include ('partials/_footer') -%>

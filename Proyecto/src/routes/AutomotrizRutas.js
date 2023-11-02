@@ -48,7 +48,7 @@ router.get('/tipoV/delete/:pk_tipo', AutomotrizControler.deleteTipoV)
 
 //RUTA DE CLIENTES
 router.get('/cliente', AutomotrizControler.listCliente)
-//router.post('/cliente/add', AutomotrizControler.saveCliente)
+router.post('/cliente/add', AutomotrizControler.saveCliente)
 router.post('/citas/add', upload.single('archivo'), AutomotrizControler.savecita);
 router.get('/cliente/update/:pk_cliente', AutomotrizControler.editCliente)
 router.post('/cliente/update/:pk_cliente', AutomotrizControler.updateCliente)
@@ -118,6 +118,12 @@ router.get('/cuerpo_cita_cliente', AutomotrizControler.listCuerpoCitaCliente)
 router.get('/citas_cliente', AutomotrizControler.listCitasCliente)
 router.get('/cita_cliente/aceptar/:pk_cita', AutomotrizControler.aceptarCita)
 router.get('/cita_cliente/denegar/:pk_cita', AutomotrizControler.denegarCita)
+
+//RUTA DE NOTIFICACION CITA CLIENTE
+router.get('/citas_cliente_noti', AutomotrizControler.listCitasClienteNoti)
+router.get('/cita_cliente_noti/aceptar/:pk_cita', AutomotrizControler.aceptarCitaNoti)
+router.get('/cita_cliente_noti/denegar/:pk_cita', AutomotrizControler.denegarCitaNoti)
+
 
 //RUTA BITACORA CLIENTE
 router.get('/bitacora_cliente', AutomotrizControler.listBitacora)

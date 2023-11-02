@@ -829,7 +829,7 @@ controller.listCotizacion = (req, res) => {
         from cotizacion cz 
         INNER JOIN 
         vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo 
-        WHERE vh.fk_cliente = ${userId};` , (err, cotizaciones) => {
+        WHERE vh.fk_cliente = ${userId} AND cz.Est_Cotizacion = 'En Espera';` , (err, cotizaciones) => {
             if (err) {
                 res.json(err)
             }
@@ -1038,7 +1038,7 @@ controller.listCitasCliente = (req, res) => {
         INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
         INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
         INNER JOIN vehiculo vh ON vh.pk_vehiculo = cz.fk_vehiculo
-        WHERE Status = "N" AND vh.fk_cliente = ${userId};
+        WHERE Status = "N" AND vh.fk_cliente = ${userId} AND ct.estado != 'Finalizado';
         ` , (err, cita) => {
             if (err) {
                 res.json(err)
@@ -1073,6 +1073,62 @@ controller.denegarCita = (req, res) => {
         })
     })
 }
+
+//NOTIFICACION CITAS CLIENTE
+controller.listCitasClienteNoti = (req, res) => {
+    const userId = req.session.userId;
+    req.getConnection((err, conn) =>{
+        conn.query(`SELECT 
+        ct.pk_cita,
+        cz.CODIGO as cotizacion,
+        em.nombre as empleado,
+        ct.presupuesto as presupuesto,
+        ct.detalle as detalle,
+        ct.tiempo_estimado as tiempo,
+        ct.estado as estado,
+        ct.file_name as imagen
+        from cita ct 
+        INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
+        INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
+        INNER JOIN vehiculo vh ON vh.pk_vehiculo = cz.fk_vehiculo
+        WHERE Status = "N" AND vh.fk_cliente = ${userId} AND ct.estado = 'En Espera';
+        ` , (err, cita) => {
+            if (err) {
+                res.json(err)
+                return;
+            }
+            console.log(cita)
+            res.render('citas_cliente_noti' , {  //renderiza en archivo vista cita
+                data: cita 
+            })
+        })
+    })
+}
+
+controller.aceptarCitaNoti = (req, res) => {
+
+    const {pk_cita} = req.params
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`update cita set estado = 'Aceptada' where pk_cita = ${pk_cita} `, (err, cotizaciones) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/citas_cliente_noti')
+        })
+    })
+}
+
+controller.denegarCitaNoti = (req, res) => {
+
+    const {pk_cita} = req.params
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`update cita set estado = 'Denegada' where pk_cita = ${pk_cita} `, (err, cotizaciones) => { //vehiculos hace referencia al resultado del query
+            res.redirect('/citas_cliente_noti')
+        })
+    })
+}
+
+
+
 
 //CUERPO DE CITA
 controller.listCuerpoCita = (req, res) => {

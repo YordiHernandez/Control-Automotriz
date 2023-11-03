@@ -1262,23 +1262,9 @@ controller.listCuerpoCitaCliente = (req, res) => {
 controller.listBitacora = (req, res) => {
     const userId = req.session.userId;
     req.getConnection((err, conn) =>{
-        conn.query(`SELECT 
-        bi.pk_bitacora,
-		bi.fk_cita,
-        bi.Fecha_Ingresada,
-        ci.fecha_entrada,
-        ci.fecha_salida,
-        ci.fk_cotizacion,
-        co.fk_servicio,
-        se.descripcion AS servicio,
-        ve.fk_cliente AS cliente,
-        ve.placa
-        from bitacora bi 
-        INNER JOIN cita ci on bi.fk_cita = ci.pk_cita
-        INNER JOIN cotizacion co on ci.fk_cotizacion = co.pk_cotizacion 
-        INNER JOIN servicio se on co.fk_servicio = se.pk_servicio
-        INNER JOIN vehiculo ve on co.fk_vehiculo = ve.pk_vehiculo
-        WHERE ve.fk_cliente = ${userId};
+        conn.query(`Select bc.pk_bitacora, cl.pk_cliente, cz.CODIGO,cl.nombre, vh.placa,ct.presupuesto, ct.detalle, ct.estado,DATE_FORMAT(cz.fecha_solicitud, '%Y-%m-%d %H:%i:%s') as fecha from bitacora bc 
+        INNER JOIN cita ct on bc.fk_cita = ct.pk_cita INNER JOIN cotizacion cz ON ct.fk_cotizacion = cz.pk_cotizacion
+        INNER JOIN vehiculo vh on vh.pk_vehiculo = cz.fk_vehiculo INNER JOIN cliente cl ON cl.pk_cliente = vh.fk_cliente where cl.pk_cliente = ${userId};
         ` , (err, bitacora) => {
             if (err) {
                 res.json(err)
@@ -1290,6 +1276,26 @@ controller.listBitacora = (req, res) => {
         })
     })
 }
+
+//bitacora administrador
+controller.listBitacoraadmin = (req, res) => {
+    const userId = req.session.userId;
+    req.getConnection((err, conn) =>{
+        conn.query(`Select bc.pk_bitacora, cz.CODIGO,cl.nombre, vh.placa,ct.presupuesto, ct.detalle, ct.estado, ct.estado,DATE_FORMAT(cz.fecha_solicitud, '%Y-%m-%d %H:%i:%s') as fecha from bitacora bc 
+        INNER JOIN cita ct on bc.fk_cita = ct.pk_cita INNER JOIN cotizacion cz ON ct.fk_cotizacion = cz.pk_cotizacion
+        INNER JOIN vehiculo vh on vh.pk_vehiculo = cz.fk_vehiculo INNER JOIN cliente cl ON vh.fk_cliente = cl.pk_cliente;
+        ` , (err, bitacora) => {
+            if (err) {
+                res.json(err)
+                return;
+            }
+            res.render('bitacora_admin' , {  //renderiza en archivo vista cita
+                data: bitacora 
+            })
+        })
+    })
+}
+
 
   //CONTROLADOR COTIZACION ADMIN
   controller.listCotizacionAdmin = (req, res) => {

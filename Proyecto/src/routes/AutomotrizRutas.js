@@ -128,6 +128,9 @@ router.get('/cita_cliente_noti/denegar/:pk_cita', AutomotrizControler.denegarCit
 //RUTA BITACORA CLIENTE
 router.get('/bitacora_cliente', AutomotrizControler.listBitacora)
 
+//RUTA BITACORA ADMIN
+router.get('/bitacora_admin', AutomotrizControler.listBitacoraadmin)
+
 //RUTA DE LOGIN Y LOGUT
 router.post('/login/validar', AutomotrizControler.login)
 router.get('/logout', AutomotrizControler.logout)

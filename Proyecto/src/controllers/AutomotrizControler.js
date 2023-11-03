@@ -8,36 +8,45 @@ const controller = {};
 // CONTROLADOR VEHICULO ADMIN
 controller.listVehiculeadmin = (req, res) => {
     const userId = req.session.userId;
+    const placaFiltro = req.query.placa || ''; // Obtiene la placa de los parámetros de la consulta, si existe
     console.log(userId);
-    req.getConnection((err, conn) =>{
-        conn.query(`SELECT
-        vh.pk_vehiculo AS pk_vehiculo,
-        mc.descripcion AS marca,
-        tv.descripcion AS tipo_vehiculo,
-        vh.modelo AS modelo,
-        vh.placa AS placa,
-        vh.color AS color,
-        vh.kilometraje AS kilometraje,
-        cl.nombre AS cliente
-      FROM
-        Vehiculo vh
-      INNER JOIN
-        marca mc ON mc.pk_marca = vh.fk_marca
-      INNER JOIN
-        cliente cl ON cl.pk_cliente = vh.fk_cliente
-      INNER JOIN
-        tipo_vehiculo tv ON tv.pk_tipo = vh.fk_tipo;
-        ` , (err, vehiculos) => {
+
+    req.getConnection((err, conn) => {
+        let query = `SELECT
+                        vh.pk_vehiculo AS pk_vehiculo,
+                        mc.descripcion AS marca,
+                        tv.descripcion AS tipo_vehiculo,
+                        vh.modelo AS modelo,
+                        vh.placa AS placa,
+                        vh.color AS color,
+                        vh.kilometraje AS kilometraje,
+                        cl.nombre AS cliente
+                    FROM
+                        Vehiculo vh
+                    INNER JOIN
+                        marca mc ON mc.pk_marca = vh.fk_marca
+                    INNER JOIN
+                        cliente cl ON cl.pk_cliente = vh.fk_cliente
+                    INNER JOIN
+                        tipo_vehiculo tv ON tv.pk_tipo = vh.fk_tipo
+                    WHERE
+                        vh.placa LIKE ?;`;
+
+        // Ejecuta la consulta con el filtro si se proporcionó una placa
+        conn.query(query, ['%' + placaFiltro + '%'], (err, vehiculos) => {
             if (err) {
-                res.json(err)
+                res.json(err);
+            } else {
+                // Renderiza la vista con los vehículos filtrados o todos si no hay filtro
+                res.render('vehiculosadmin', {
+                    data: vehiculos,
+                    busqueda: placaFiltro // Pasa el filtro actual a la vista
+                });
             }
-            console.log(vehiculos)
-            res.render('vehiculosadmin' , {  //renderiza en archivo vista vehiculos
-                data: vehiculos 
-            })
-        })
-    })
-}
+        });
+    });
+};
+
 
 controller.saveVehiculeadmin = (req, res) => {
     const userId = req.session.userId;
@@ -92,9 +101,8 @@ controller.deleteVehiculoadmin = (req, res) => {
 
 controller.listVehicule = (req, res) => {
     const userId = req.session.userId;
-    console.log(userId);
-    req.getConnection((err, conn) =>{
-        conn.query(`SELECT
+    let placaFiltro = req.query.placa; // Obtén el valor del parámetro 'modelo' de la consulta
+    let query = `SELECT
         vh.pk_vehiculo AS pk_vehiculo,
         mc.descripcion AS marca,
         tv.descripcion AS tipo_vehiculo,
@@ -103,26 +111,35 @@ controller.listVehicule = (req, res) => {
         vh.color AS color,
         vh.kilometraje AS kilometraje,
         cl.nombre AS cliente
-      FROM
+    FROM
         Vehiculo vh
-      INNER JOIN
+    INNER JOIN
         marca mc ON mc.pk_marca = vh.fk_marca
-      INNER JOIN
+    INNER JOIN
         cliente cl ON cl.pk_cliente = vh.fk_cliente
-      INNER JOIN
+    INNER JOIN
         tipo_vehiculo tv ON tv.pk_tipo = vh.fk_tipo
-        WHERE vh.fk_cliente = ${userId};
-        ` , (err, vehiculos) => {
+    WHERE vh.fk_cliente = ?`;
+
+    let queryParams = [userId];
+
+    // Añade la lógica del filtro si 'modelo' es proporcionado en la consulta
+    if (placaFiltro) {
+        query += ` AND vh.placa LIKE ?`;
+        queryParams.push(`%${placaFiltro}%`);
+    }
+
+    req.getConnection((err, conn) =>{
+        conn.query(query, queryParams, (err, vehiculos) => {
             if (err) {
-                res.json(err)
+                res.json(err);
             }
-            console.log(vehiculos)
-            res.render('vehiculos' , {  //renderiza en archivo vista vehiculos
-                data: vehiculos 
-            })
-        })
-    })
-}
+            res.render('vehiculos', { // Renderiza en archivo vista vehiculos
+                data: vehiculos
+            });
+        });
+    });
+};
 
 controller.saveVehicule = (req, res) => {
     const userId = req.session.userId;
@@ -815,31 +832,43 @@ controller.verSesion = (req, res) => {
   }
 
   //CONTROLADOR COTIZACION
-controller.listCotizacion = (req, res) => {
+  controller.listCotizacion = (req, res) => {
     const userId = req.session.userId;
-    console.log(userId);
+    let codigoFiltro = req.query.codigo || ''; // Obtén el valor del parámetro 'codigo' de la consulta o un string vacío si no está presente
+
     req.getConnection((err, conn) =>{
-        conn.query(`SELECT 
-        cz.pk_cotizacion AS pk_cotizacion,
-        vh.placa AS placa,
-        cz.Est_Cotizacion AS Estado,
-        cz.Codigo as Codigo,
-        cz.Descripcion as Descripcion,
-        DATE_FORMAT(cz.fecha_solicitud, '%Y-%m-%d %H:%i:%s') as Fecha
+        let query = `SELECT 
+            cz.pk_cotizacion AS pk_cotizacion,
+            vh.placa AS placa,
+            cz.Est_Cotizacion AS Estado,
+            cz.Codigo as Codigo,
+            cz.Descripcion as Descripcion,
+            DATE_FORMAT(cz.fecha_solicitud, '%Y-%m-%d %H:%i:%s') as Fecha
         from cotizacion cz 
         INNER JOIN 
-        vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo 
-        WHERE vh.fk_cliente = ${userId} AND cz.Est_Cotizacion = 'En Espera';` , (err, cotizaciones) => {
+            vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo 
+        WHERE vh.fk_cliente = ${userId} 
+            AND cz.Est_Cotizacion = 'En Espera'`;
+
+        // Si se proporcionó un código de filtro, añádelo a la consulta
+        if (codigoFiltro) {
+            query += ` AND cz.Codigo LIKE ?`;
+            codigoFiltro = `%${codigoFiltro}%`;
+        }
+
+        conn.query(query, [codigoFiltro], (err, cotizaciones) => { // Asegúrate de que el placeholder '?' corresponda a los parámetros que añades
             if (err) {
-                res.json(err)
+                res.json(err);
+            } else {
+                console.log(cotizaciones);
+                res.render('cotizacion', { //renderiza en archivo vista cotizacion con los datos filtrados
+                    data: cotizaciones,
+                    busqueda: req.query.codigo || '' // Mantén el término de búsqueda en el campo de entrada
+                });
             }
-            console.log(cotizaciones)
-            res.render('cotizacion' , {  //renderiza en archivo vista cotizacion
-                data: cotizaciones 
-            })
-        })
-    })
-}
+        });
+    });
+};
 
 controller.saveCotizacion = (req, res) => {
     let data = req.body
@@ -895,9 +924,8 @@ controller.deleteCotizacion = (req, res) => {
 //CITAS
 controller.listcitas = (req, res) => {
     const userId = req.session.userId;
-    console.log(userId);
-    req.getConnection((err, conn) =>{
-        conn.query(`SELECT 
+    let codigoFiltro = req.query.codigo || ''; // Obtén el valor del parámetro 'codigo' de la consulta o un string vacío si no está presente
+    let query = `SELECT 
         ct.pk_cita,
         cz.CODIGO as cotizacion,
         em.nombre as empleado,
@@ -909,17 +937,28 @@ controller.listcitas = (req, res) => {
         from cita ct 
         INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
         INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
-        WHERE Status = "N";
-        ` , (err, cita) => {
+        WHERE ct.Status = "N"`;
+
+    // Si el filtro de código está presente, añadir la condición WHERE para la búsqueda
+    if (codigoFiltro) {
+        query += ` AND cz.CODIGO LIKE ?`;
+    }
+
+    req.getConnection((err, conn) =>{
+        // Utiliza un placeholder '?' para evitar inyección SQL si hay un filtro de búsqueda
+        conn.query(query, [`%${codigoFiltro}%`], (err, citas) => {
             if (err) {
-                res.json(err)
+                res.json(err);
+            } else {
+                res.render('citas', {  // Renderiza en archivo vista citas con los datos filtrados
+                    data: citas,
+                    busqueda: codigoFiltro // Pasa el valor de búsqueda a la vista
+                });
             }
-            res.render('citas' , {  //renderiza en archivo vista cita
-                data: cita 
-            })
-        })
-    })
-}
+        });
+    });
+};
+
 
 controller.savecita = (req, res) => {
     console.log('Entrar a funcion');
@@ -1024,33 +1063,45 @@ controller.deletecita = (req, res) => {
 //Cita Cliente
 controller.listCitasCliente = (req, res) => {
     const userId = req.session.userId;
-    req.getConnection((err, conn) =>{
-        conn.query(`SELECT 
-        ct.pk_cita,
-        cz.CODIGO as cotizacion,
-        em.nombre as empleado,
-        ct.presupuesto as presupuesto,
-        ct.detalle as detalle,
-        ct.tiempo_estimado as tiempo,
-        ct.estado as estado,
-        ct.file_name as imagen
-        from cita ct 
-        INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
-        INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
-        INNER JOIN vehiculo vh ON vh.pk_vehiculo = cz.fk_vehiculo
-        WHERE Status = "N" AND vh.fk_cliente = ${userId} AND ct.estado != 'Finalizado';
-        ` , (err, cita) => {
+    let codigoFiltro = req.query.codigo; // Obtiene el valor del parámetro 'codigo' de la consulta, si existe
+
+    req.getConnection((err, conn) => {
+        let sqlQuery = `
+        SELECT 
+            ct.pk_cita,
+            cz.CODIGO as cotizacion,
+            em.nombre as empleado,
+            ct.presupuesto as presupuesto,
+            ct.detalle as detalle,
+            ct.tiempo_estimado as tiempo,
+            ct.estado as estado,
+            ct.file_name as imagen
+            from cita ct 
+            INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
+            INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
+            INNER JOIN vehiculo vh ON vh.pk_vehiculo = cz.fk_vehiculo
+            WHERE Status = "N" AND vh.fk_cliente = ${userId} AND ct.estado != 'Finalizado'`;
+
+        // Si se proporcionó un código, agregue una cláusula WHERE adicional para filtrar por ese código
+        if (codigoFiltro) {
+            sqlQuery += ` AND cz.CODIGO LIKE ?`;
+            codigoFiltro = `%${codigoFiltro}%`;
+        }
+
+        conn.query(sqlQuery, codigoFiltro ? [codigoFiltro] : [], (err, citas) => {
             if (err) {
-                res.json(err)
+                res.json(err);
                 return;
             }
-            console.log(cita)
-            res.render('citas_cliente' , {  //renderiza en archivo vista cita
-                data: cita 
-            })
-        })
-    })
-}
+            // Renderiza la vista 'citas_cliente' con los datos filtrados y el término de búsqueda actual
+            res.render('citas_cliente', {
+                data: citas,
+                busqueda: req.query.codigo || ''  // Mantén el valor de búsqueda para mostrar en el input
+            });
+        });
+    });
+};
+
 
 controller.aceptarCita = (req, res) => {
 
@@ -1077,33 +1128,43 @@ controller.denegarCita = (req, res) => {
 //NOTIFICACION CITAS CLIENTE
 controller.listCitasClienteNoti = (req, res) => {
     const userId = req.session.userId;
-    req.getConnection((err, conn) =>{
-        conn.query(`SELECT 
-        ct.pk_cita,
-        cz.CODIGO as cotizacion,
-        em.nombre as empleado,
-        ct.presupuesto as presupuesto,
-        ct.detalle as detalle,
-        ct.tiempo_estimado as tiempo,
-        ct.estado as estado,
-        ct.file_name as imagen
-        from cita ct 
-        INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
-        INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
-        INNER JOIN vehiculo vh ON vh.pk_vehiculo = cz.fk_vehiculo
-        WHERE Status = "N" AND vh.fk_cliente = ${userId} AND ct.estado = 'En Espera';
-        ` , (err, cita) => {
+    let codigoFiltro = req.query.codigo; // Obtiene el valor del parámetro 'codigo' de la consulta, si existe
+    req.getConnection((err, conn) => {
+        let sqlQuery = `SELECT 
+            ct.pk_cita,
+            cz.CODIGO as cotizacion,
+            em.nombre as empleado,
+            ct.presupuesto as presupuesto,
+            ct.detalle as detalle,
+            ct.tiempo_estimado as tiempo,
+            ct.estado as estado,
+            ct.file_name as imagen
+            from cita ct 
+            INNER JOIN cotizacion cz on ct.fk_cotizacion = cz.pk_cotizacion 
+            INNER JOIN empleado em on ct.fk_empleado = em.pk_empleado
+            INNER JOIN vehiculo vh ON vh.pk_vehiculo = cz.fk_vehiculo
+            WHERE vh.fk_cliente = ${userId} AND ct.estado = 'En Espera'`;
+        
+        // Si se proporcionó un código, agregue una cláusula WHERE adicional para filtrar por ese código
+        if (codigoFiltro) {
+            sqlQuery += ` AND cz.CODIGO LIKE ?`;
+            codigoFiltro = `%${codigoFiltro}%`;
+        }
+
+        conn.query(sqlQuery, codigoFiltro ? [codigoFiltro] : [], (err, cita) => {
             if (err) {
-                res.json(err)
+                res.json(err);
                 return;
             }
-            console.log(cita)
-            res.render('citas_cliente_noti' , {  //renderiza en archivo vista cita
-                data: cita 
-            })
-        })
-    })
-}
+            console.log(cita);
+            res.render('citas_cliente_noti', {  //renderiza en archivo vista cita
+                data: cita,
+                busqueda: req.query.codigo || ''  // Mantén el valor de búsqueda para mostrar en el input
+            });
+        });
+    });
+};
+
 
 controller.aceptarCitaNoti = (req, res) => {
 
@@ -1132,36 +1193,46 @@ controller.denegarCitaNoti = (req, res) => {
 
 //CUERPO DE CITA
 controller.listCuerpoCita = (req, res) => {
-    req.getConnection((err, conn) =>{
-        conn.query(`SELECT 
-        cc.pk_cuerpo AS pk_cuerpo,
-        cc.fk_cita AS cita,
-        cc.fk_servicio AS fk_servicio,
-        se.descripcion  as servicio,
-        co.CODIGO as cotizacion,
-        cc.detalle as detalle,
-        cc.estado as estado,
-        cc.file_name as imagen
-        from cuerpo_cita cc
-        INNER JOIN 
-        servicio se on se.pk_servicio = cc.fk_servicio
-        INNER JOIN
-        cita ci on ci.pk_cita = cc.fk_cita
-        INNER JOIN
-        cotizacion co on co.pk_cotizacion = ci.fk_cotizacion
-        WHERE cc.estado != 'Finalizado';
-        ` , (err, cuerpo_cita) => {
+    let codigoFiltro = req.query.codigo; // Obtiene el valor del parámetro 'codigo' de la consulta, si existe
+    req.getConnection((err, conn) => {
+        let sqlQuery = `SELECT 
+            cc.pk_cuerpo AS pk_cuerpo,
+            cc.fk_cita AS cita,
+            cc.fk_servicio AS fk_servicio,
+            se.descripcion as servicio,
+            co.CODIGO as cotizacion,
+            cc.detalle as detalle,
+            cc.estado as estado,
+            cc.file_name as imagen
+            from cuerpo_cita cc
+            INNER JOIN 
+            servicio se on se.pk_servicio = cc.fk_servicio
+            INNER JOIN
+            cita ci on ci.pk_cita = cc.fk_cita
+            INNER JOIN
+            cotizacion co on co.pk_cotizacion = ci.fk_cotizacion
+            WHERE cc.estado != 'Finalizado'`;
+
+        // Si se proporcionó un código, agregue una cláusula WHERE adicional para filtrar por ese código
+        if (codigoFiltro) {
+            sqlQuery += ` AND co.CODIGO LIKE ?`;
+            codigoFiltro = `%${codigoFiltro}%`;
+        }
+
+        conn.query(sqlQuery, codigoFiltro ? [codigoFiltro] : [], (err, cuerpo_cita) => {
             if (err) {
-                res.json(err)
+                res.json(err);
                 return;
             }
-            console.log(cuerpo_cita)
-            res.render('cuerpo_cita' , {  //renderiza en archivo vista cita
-                data: cuerpo_cita 
-            })
-        })
-    })
-}
+            // Renderiza la vista 'cuerpo_cita' con los datos filtrados y el término de búsqueda actual
+            res.render('cuerpo_cita', {
+                data: cuerpo_cita,
+                busqueda: req.query.codigo || ''  // Mantén el valor de búsqueda para mostrar en el input
+            });
+        });
+    });
+};
+
 controller.preSaveCuerpoCita = async (req, res) => {
     const {pk_cita} = req.params
 
@@ -1224,105 +1295,166 @@ controller.cuerpoCitaPago = (req, res) => {
 //CUERPO DE CITA CLIENTE
 controller.listCuerpoCitaCliente = (req, res) => {
     const userId = req.session.userId;
-    req.getConnection((err, conn) =>{
-        conn.query(`
+    let codigoFiltro = req.query.codigo; // Obtiene el valor del parámetro 'codigo' de la consulta, si existe
+
+    req.getConnection((err, conn) => {
+        let sqlQuery = `
         SELECT 
-                cc.pk_cuerpo AS pk_cuerpo,
-                cc.fk_cita AS cita,
-                cc.fk_servicio AS fk_servicio,
-                se.descripcion  as servicio,
-                co.CODIGO as cotizacion,
-                cc.detalle as detalle,
-                cc.estado as estado,
-                cc.file_name as imagen
-                from cuerpo_cita cc
-                INNER JOIN 
-                servicio se on se.pk_servicio = cc.fk_servicio
-                INNER JOIN
-                cita ci on ci.pk_cita = cc.fk_cita
-                INNER JOIN
-                cotizacion co on co.pk_cotizacion = ci.fk_cotizacion
-                INNER JOIN 
-                vehiculo ve on ve.pk_vehiculo = co.fk_vehiculo
-                WHERE ve.fk_cliente = ${userId} AND cc.estado != 'Finalizado';
-        ` , (err, cuerpo_cita) => {
+            cc.pk_cuerpo AS pk_cuerpo,
+            cc.fk_cita AS cita,
+            cc.fk_servicio AS fk_servicio,
+            se.descripcion as servicio,
+            co.CODIGO as cotizacion,
+            cc.detalle as detalle,
+            cc.estado as estado,
+            cc.file_name as imagen
+            from cuerpo_cita cc
+            INNER JOIN 
+            servicio se on se.pk_servicio = cc.fk_servicio
+            INNER JOIN
+            cita ci on ci.pk_cita = cc.fk_cita
+            INNER JOIN
+            cotizacion co on co.pk_cotizacion = ci.fk_cotizacion
+            INNER JOIN 
+            vehiculo ve on ve.pk_vehiculo = co.fk_vehiculo
+            WHERE ve.fk_cliente = ${userId} AND cc.estado != 'Finalizado'`;
+
+        // Si se proporcionó un código, agregue una cláusula WHERE adicional para filtrar por ese código
+        if (codigoFiltro) {
+            sqlQuery += ` AND co.CODIGO LIKE ?`;
+            codigoFiltro = `%${codigoFiltro}%`;
+        }
+
+        conn.query(sqlQuery, codigoFiltro ? [codigoFiltro] : [], (err, cuerpo_cita) => {
             if (err) {
-                res.json(err)
+                res.json(err);
                 return;
             }
-            console.log(cuerpo_cita)
-            res.render('cuerpo_cita_cliente' , {  //renderiza en archivo vista cita
-                data: cuerpo_cita 
-            })
-        })
-    })
-}
+            // Renderiza la vista 'cuerpo_cita_cliente' con los datos filtrados y el término de búsqueda actual
+            res.render('cuerpo_cita_cliente', {
+                data: cuerpo_cita,
+                busqueda: req.query.codigo || ''  // Mantén el valor de búsqueda para mostrar en el input
+            });
+        });
+    });
+};
+
 
 //bitacora cliente
 controller.listBitacora = (req, res) => {
     const userId = req.session.userId;
-    req.getConnection((err, conn) =>{
-        conn.query(`Select bc.pk_bitacora, cl.pk_cliente, cz.CODIGO,cl.nombre, vh.placa,ct.presupuesto, ct.detalle, ct.estado,DATE_FORMAT(cz.fecha_solicitud, '%Y-%m-%d %H:%i:%s') as fecha from bitacora bc 
-        INNER JOIN cita ct on bc.fk_cita = ct.pk_cita INNER JOIN cotizacion cz ON ct.fk_cotizacion = cz.pk_cotizacion
-        INNER JOIN vehiculo vh on vh.pk_vehiculo = cz.fk_vehiculo INNER JOIN cliente cl ON cl.pk_cliente = vh.fk_cliente where cl.pk_cliente = ${userId};
-        ` , (err, bitacora) => {
+    const codigoFiltro = req.query.codigo;
+    const placaFiltro = req.query.placa;
+
+    req.getConnection((err, conn) => {
+        let sqlQuery = `Select bc.pk_bitacora, cl.pk_cliente, cz.CODIGO, cl.nombre, vh.placa, ct.presupuesto, ct.detalle, ct.estado, DATE_FORMAT(cz.fecha_solicitud, '%Y-%m-%d %H:%i:%s') as fecha from bitacora bc 
+        INNER JOIN cita ct on bc.fk_cita = ct.pk_cita 
+        INNER JOIN cotizacion cz ON ct.fk_cotizacion = cz.pk_cotizacion
+        INNER JOIN vehiculo vh on vh.pk_vehiculo = cz.fk_vehiculo 
+        INNER JOIN cliente cl ON cl.pk_cliente = vh.fk_cliente 
+        where cl.pk_cliente = ${userId}`;
+
+        let queryParams = [];
+
+        if (codigoFiltro) {
+            sqlQuery += ` AND cz.CODIGO LIKE ?`;
+            queryParams.push(`%${codigoFiltro}%`);
+        }
+        if (placaFiltro) {
+            sqlQuery += ` AND vh.placa LIKE ?`;
+            queryParams.push(`%${placaFiltro}%`);
+        }
+
+        conn.query(sqlQuery, queryParams, (err, bitacora) => {
             if (err) {
-                res.json(err)
+                res.json(err);
                 return;
             }
-            res.render('bitacora_cliente' , {  //renderiza en archivo vista cita
-                data: bitacora 
-            })
-        })
-    })
-}
+            res.render('bitacora_cliente', {
+                data: bitacora,
+                busquedaCodigo: req.query.codigo || '',
+                busquedaPlaca: req.query.placa || ''
+            });
+        });
+    });
+};
 
 //bitacora administrador
 controller.listBitacoraadmin = (req, res) => {
-    const userId = req.session.userId;
-    req.getConnection((err, conn) =>{
-        conn.query(`Select bc.pk_bitacora, cz.CODIGO,cl.nombre, vh.placa,ct.presupuesto, ct.detalle, ct.estado, ct.estado,DATE_FORMAT(cz.fecha_solicitud, '%Y-%m-%d %H:%i:%s') as fecha from bitacora bc 
-        INNER JOIN cita ct on bc.fk_cita = ct.pk_cita INNER JOIN cotizacion cz ON ct.fk_cotizacion = cz.pk_cotizacion
-        INNER JOIN vehiculo vh on vh.pk_vehiculo = cz.fk_vehiculo INNER JOIN cliente cl ON vh.fk_cliente = cl.pk_cliente;
-        ` , (err, bitacora) => {
+    const codigoFiltro = req.query.codigo;
+    const placaFiltro = req.query.placa;
+
+    req.getConnection((err, conn) => {
+        let sqlQuery = `Select bc.pk_bitacora, cz.CODIGO, cl.nombre, vh.placa, ct.presupuesto, ct.detalle, ct.estado, DATE_FORMAT(cz.fecha_solicitud, '%Y-%m-%d %H:%i:%s') as fecha from bitacora bc 
+        INNER JOIN cita ct on bc.fk_cita = ct.pk_cita 
+        INNER JOIN cotizacion cz ON ct.fk_cotizacion = cz.pk_cotizacion
+        INNER JOIN vehiculo vh on vh.pk_vehiculo = cz.fk_vehiculo 
+        INNER JOIN cliente cl ON vh.fk_cliente = cl.pk_cliente`;
+
+        let queryParams = [];
+
+        if (codigoFiltro) {
+            sqlQuery += ` WHERE cz.CODIGO LIKE ?`;
+            queryParams.push(`%${codigoFiltro}%`);
+        }
+
+        if (placaFiltro) {
+            sqlQuery += codigoFiltro ? ` AND` : ` WHERE`;
+            sqlQuery += ` vh.placa LIKE ?`;
+            queryParams.push(`%${placaFiltro}%`);
+        }
+
+        conn.query(sqlQuery, queryParams, (err, bitacora) => {
             if (err) {
-                res.json(err)
+                res.json(err);
                 return;
             }
-            res.render('bitacora_admin' , {  //renderiza en archivo vista cita
-                data: bitacora 
-            })
-        })
-    })
-}
+            res.render('bitacora_admin', {
+                data: bitacora,
+                busquedaCodigo: codigoFiltro || '',
+                busquedaPlaca: placaFiltro || ''
+            });
+        });
+    });
+};
+
 
 
   //CONTROLADOR COTIZACION ADMIN
   controller.listCotizacionAdmin = (req, res) => {
     const userId = req.session.userId;
+    const codigoFiltro = req.query.codigo || ''; // Obtiene el código de los parámetros de la consulta, si existe
     console.log(userId);
-    req.getConnection((err, conn) =>{
-        conn.query(`SELECT 
-        cz.pk_cotizacion AS pk_cotizacion,
-        vh.placa AS placa,
-        cz.Est_Cotizacion AS Estado,
-        cz.Codigo as Codigo,
-        cz.Descripcion as Descripcion,
-        DATE_FORMAT(cz.fecha_solicitud, '%Y-%m-%d %H:%i:%s') as Fecha
-        from cotizacion cz 
-        INNER JOIN 
-        vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo;
-        ` , (err, cotizaciones) => {
+
+    req.getConnection((err, conn) => {
+        let query = `SELECT 
+                        cz.pk_cotizacion AS pk_cotizacion,
+                        vh.placa AS placa,
+                        cz.Est_Cotizacion AS Estado,
+                        cz.Codigo as Codigo,
+                        cz.Descripcion as Descripcion,
+                        DATE_FORMAT(cz.fecha_solicitud, '%Y-%m-%d %H:%i:%s') as Fecha
+                    from cotizacion cz 
+                    INNER JOIN 
+                        vehiculo vh on cz.fk_vehiculo = vh.pk_vehiculo
+                    WHERE
+                        cz.Codigo LIKE ?;`;
+
+        // Ejecuta la consulta con el filtro si se proporcionó un código
+        conn.query(query, ['%' + codigoFiltro + '%'], (err, cotizaciones) => {
             if (err) {
-                res.json(err)
+                res.json(err);
+            } else {
+                // Renderiza la vista con las cotizaciones filtradas o todas si no hay filtro
+                res.render('cotizacionadmin', {
+                    data: cotizaciones,
+                    busqueda: codigoFiltro // Pasa el filtro actual a la vista
+                });
             }
-            console.log(cotizaciones)
-            res.render('cotizacionadmin' , {  //renderiza en archivo vista cotizacion
-                data: cotizaciones 
-            })
-        })
-    })
-}
+        });
+    });
+};
+
 
 controller.aceptarCotizacion = (req, res) => {
 

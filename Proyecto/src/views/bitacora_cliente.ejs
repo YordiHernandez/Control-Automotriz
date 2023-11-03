@@ -8,6 +8,12 @@
     <div class="row mt-1">
         <div class="col-md-12">
             <table class="table table-bordered table-hover">
+                <form action="/bitacora_cliente" method="get">
+                    <input type="text" name="codigo" placeholder="Buscar por código" value="<%= busquedaCodigo %>">
+                    <input type="text" name="placa" placeholder="Buscar por placa" value="<%= busquedaPlaca %>">
+                    <button type="submit" class="btn btn-outline-info">Buscar</button>
+                    <a href="/bitacora_cliente" class="btn btn-outline-warning">Restablecer</a>
+                </form>
                 <thead>
                     <tr>
                         <th>#</th>

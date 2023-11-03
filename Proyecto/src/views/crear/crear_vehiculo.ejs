@@ -1,55 +1,95 @@
 <%- include ('../partials/_header') -%>
 
 <div class="row mt-1">
-<div class="col-md-5" style="margin-left: 5px;">
-    <div class="card bg-light ">
-        <div class="card-body">
-            <div class="card-header">Ingresar Vehiculo</div>
-            <form action="/vehiculo/add" method="post" style="padding: 5px;">
-                <div class="form-group">
-                    <!--input type="text" name="marca" placeholder="Inserte marca" class="form-control" style="margin-bottom: 5px;"/-->
-                    <label for="marca">Seleccione Marca:</label>
-                    <select name="marca" id="marca" class="form-control" style="margin-bottom: 5px;">
-                        <% for (const opcion of qmarca) { %>
-                            <option value="<%= opcion.pk_marca %>"><%= opcion.descripcion %></option>
-                        <% } %>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <!--input type="text" name="tipo" placeholder="Inserte tipo" class="form-control" style="margin-bottom: 5px;"/-->
-                    <label for="marca">Seleccione Tipo Vehiculo:</label>
-                    <select name="tipo" id="tipo" class="form-control" style="margin-bottom: 5px;">
-                        <% for (const opcion of qtipo) { %>
-                            <option value="<%= opcion.pk_tipo %>"><%= opcion.descripcion %></option>
-                        <% } %>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="modelo" placeholder="Inserte modelo" class="form-control" style="margin-bottom: 5px;"/>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="placa" placeholder="Inserte numero placa" class="form-control" style="margin-bottom: 5px;" />
-                </div>
-                <div class="form-group">
-                    <input type="text" name="color" placeholder="Inserte color" class="form-control" style="margin-bottom: 5px;" />
-                </div>
-                <div class="form-group">
-                    <input type="text" name="kilometraje" placeholder="Inserte kilometraje" class="form-control" style="margin-bottom: 5px;" />
-                </div>
-                <!--div class="form-group"-->
-                    <!--input type="text" name="cliente" placeholder="cliente" class="form-control" style="margin-bottom: 5px;" /-->
-                    <!--select name="cliente" id="cliente" class="form-control" style="margin-bottom: 5px;">
-                        <% for (const opcion of qcliente) { %>
-                            <option value="<%= opcion.pk_cliente %>"><%= opcion.nombre %></option>
-                        <% } %>
-                    </select>
-                </div-->
-                <button type="submit" class="btn btn-primary" style="margin-top: 5px;">
-                    Guardar Vehiculo
-                </button>
+    <div class="col-md-5" style="margin-left: 5px;">
+        <div class="card bg-light ">
+            <div class="card-body">
+                <div class="card-header">Ingresar Vehiculo</div>
+                <form id="formularioVehiculo" action="/vehiculo/add" method="post" style="padding: 5px;">
+                    <div class="form-group">
+                        <label for="marca">Seleccione Marca:</label>
+                        <select name="marca" id="marca" class="form-control" style="margin-bottom: 5px;">
+                            <% for (const opcion of qmarca) { %>
+                                <option value="<%= opcion.pk_marca %>"><%= opcion.descripcion %></option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Seleccione Tipo Vehiculo:</label>
+                        <select name="tipo" id="tipo" class="form-control" style="margin-bottom: 5px;">
+                            <% for (const opcion of qtipo) { %>
+                                <option value="<%= opcion.pk_tipo %>"><%= opcion.descripcion %></option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="modelo" placeholder="Inserte modelo" class="form-control" style="margin-bottom: 5px;"/>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="placa" placeholder="Inserte numero placa" class="form-control" style="margin-bottom: 5px;" />
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="color" placeholder="Inserte color" class="form-control" style="margin-bottom: 5px;" />
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="kilometraje" placeholder="Inserte kilometraje" class="form-control" style="margin-bottom: 5px;" />
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 5px;">
+                        Guardar Vehiculo
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-    </form>
 </div>
 
 <%- include ('../partials/_footer') -%>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.getElementById('formularioVehiculo').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevenir que el formulario se envíe inmediatamente
+        
+        // Verificar si hay campos vacíos antes de mostrar la alerta de confirmación
+        const inputs = this.querySelectorAll("input[type=text]");
+        const selects = this.querySelectorAll("select");
+        let allFilled = true;
+        for (let input of inputs) {
+            if (input.value.trim() === '') {
+                allFilled = false;
+                break;
+            }
+        }
+        for (let select of selects) {
+            if (select.value.trim() === '') {
+                allFilled = false;
+                break;
+            }
+        }
+
+        if (!allFilled) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Algo salio mal..',
+                text: 'Todos los campos deben estar llenos.',
+                confirmButtonColor: '#3085d6',
+            });
+            return; // Detener la ejecución si hay campos vacíos
+        }
+        
+        // Mostrar confirmación si todos los campos están llenos
+        Swal.fire({
+            title: '¿Estás seguro de que deseas guardar este vehículo?',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit(); // Enviar el formulario si el usuario confirma
+            }
+        });
+    });
+</script>

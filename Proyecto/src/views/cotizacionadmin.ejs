@@ -7,6 +7,11 @@
     <hr>
     <div class="row mt-1">
         <div class="col-md-12">
+            <form action="/cotizacionadmin" method="get">
+                <input type="text" name="codigo" placeholder="Buscar por código" value="<%= busqueda %>">
+                <button type="submit" class="btn btn-outline-info">Buscar</button>
+                <a href="/cotizacionadmin" class="btn btn-outline-warning">Restablecer</a>
+            </form>
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>

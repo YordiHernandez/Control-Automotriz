@@ -124,6 +124,8 @@ router.get('/citas_cliente_noti', AutomotrizControler.listCitasClienteNoti)
 router.get('/cita_cliente_noti/aceptar/:pk_cita', AutomotrizControler.aceptarCitaNoti)
 router.get('/cita_cliente_noti/denegar/:pk_cita', AutomotrizControler.denegarCitaNoti)
 
+//RUTA DE PAGOS CLIENTE
+router.get('/pago_user', AutomotrizControler.listPagosCliente)
 
 //RUTA BITACORA CLIENTE
 router.get('/bitacora_cliente', AutomotrizControler.listBitacora)

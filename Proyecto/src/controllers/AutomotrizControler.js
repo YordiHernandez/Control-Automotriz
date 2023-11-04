@@ -1188,7 +1188,44 @@ controller.denegarCitaNoti = (req, res) => {
     })
 }
 
+//pagos usuario
+controller.listPagosCliente = (req, res) => {
+    const userId = req.session.userId;
+    let codigoFiltro = req.query.codigo; // Obtiene el valor del parámetro 'codigo' de la consulta, si existe
+    req.getConnection((err, conn) => {
+        let sqlQuery = `select pa.pk_pago, 
+        pa.fecha as fecha, 
+        pa.tipo as tipo, 
+        co.CODIGO as cotizacion, 
+        ci.presupuesto as cantidad,
+        cl.nombre as cliente
+        FROM pago pa 
+        INNER JOIN cita ci ON ci.pk_cita = pa.fk_cita
+        INNER JOIN cotizacion co ON co.pk_cotizacion = ci.fk_cotizacion
+        INNER JOIN vehiculo ve ON ve.pk_vehiculo = co.fk_vehiculo
+        INNER JOIN cliente cl ON cl.pk_cliente = ve.fk_cliente
+        INNER JOIN cuerpo_cita cc ON cc.fk_cita = ci.pk_cita
+        WHERE cl.pk_cliente = ${userId}`;
+        
+        // Si se proporcionó un código, agregue una cláusula WHERE adicional para filtrar por ese código
+        if (codigoFiltro) {
+            sqlQuery += ` AND cz.CODIGO LIKE ?`;
+            codigoFiltro = `%${codigoFiltro}%`;
+        }
 
+        conn.query(sqlQuery, codigoFiltro ? [codigoFiltro] : [], (err, cita) => {
+            if (err) {
+                res.json(err);
+                return;
+            }
+            console.log(cita);
+            res.render('pago_user', {  //renderiza en archivo vista cita
+                data: cita,
+                busqueda: req.query.codigo || ''  // Mantén el valor de búsqueda para mostrar en el input
+            });
+        });
+    });
+};
 
 
 //CUERPO DE CITA
@@ -1455,7 +1492,65 @@ controller.listBitacoraadmin = (req, res) => {
     });
 };
 
+//Pagos
+controller.listpagos = async (req, res) => {    //linea siempre, solo crearle nomre metodo
+    
+    const qcliente = await consultarPago(req)
+    const ucliente = await consultarUPago(req)
 
+    res.render("crear_usuario_cliente", {
+        data: ucliente,
+        qcliente
+    });
+
+    async function consultarUcliente(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                conn.query(
+                    `Select uc.pk_ucliente as id_usuario,cl.nombre as cliente,uc.usuario_cliente as usuario,uc.clave_cliente as clave from usuarios_cliente uc inner join cliente cl on uc.fk_cliente = cl.pk_cliente;`,
+                    (err, ucliente) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(ucliente);
+                        }
+                    }
+                );
+            });
+        });
+    }
+
+    async function consultarCliente(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                conn.query(
+                    `SELECT * FROM cliente`,
+                    (err, qcliente) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(qcliente);
+                        }
+                    }
+                );
+            });
+        });
+    }
+}
+
+controller.saveUserCliente = (req, res) => {
+
+    let data = req.body
+    
+    req.getConnection((err, conn)=>{
+        conn.query(`insert into usuarios_cliente(fk_cliente, usuario_cliente, clave_cliente) VALUES (${data.cliente},'${data.usuario}','${data.pass}');`, (err, usuario_cliente) => { //tipoV hace referencia al resultado del query
+            res.redirect('/usuario_cliente')
+        })
+    })
+}
+
+
+// cotizacion
 controller.aceptarCotizacion = (req, res) => {
 
     const {pk_cotizacion} = req.params

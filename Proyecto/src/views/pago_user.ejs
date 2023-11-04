@@ -1,0 +1,45 @@
+<%- include ('partials/_header') -%>
+<div class="card border-light mb-4" style="max-width: 100%;">
+<div class="card-header">MIS PAGOS</div>
+<div class="card-body">
+<div class="container">
+    <a href="/menu_user" class="btn btn-info">Regresar</a>
+    <hr>
+    <div class="row mt-1">
+        <div class="col-md-12">
+            <form action="/pagos_cliente" method="get">
+                <input type="text" name="codigo" placeholder="Buscar por código" value="<%= busqueda %>">
+                <button type="submit" class="btn btn-outline-info">Buscar</button>
+                <a href="/pagos_cliente" class="btn btn-outline-warning">Restablecer</a>
+            </form>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>N.</th>
+                        <th>Cotización</th>
+                        <th>Fecha de Pago</th>
+                        <th>Tipo de Pago</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <% if (data) { %>
+                    <% for (var i = 0; i < data.length; i++) { %>
+                        <tr>
+                            <td><%= (i + 1)%></td>
+                            <td style="display: none;"><%= (data[i].pk_pago) %></td>
+                            <td><%= (data[i].cotizacion) %></td>
+                            <td><%= (data[i].fecha) %></td>
+                            <td>Q. <%= (data[i].tipo) %></td>
+                            <td><%= (data[i].cantidad) %></td>   
+                        </tr>
+                <% } %>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<%- include ('partials/_footer') -%>

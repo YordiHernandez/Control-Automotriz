@@ -26,7 +26,7 @@ app.set('views', path.join(__dirname, 'views'));
 const configdb = {
     host: 'localhost',
     user: 'root',
-    password: '12345',
+    password: 'Jm59460816',
     port: 3306,
     database: 'automotriz',
 };

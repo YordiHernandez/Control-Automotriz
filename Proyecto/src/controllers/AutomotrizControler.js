@@ -768,7 +768,7 @@ controller.login = async (req, res) => {
                     
                     res.redirect('/menu_user')
                 }  else {
-                    res.send('usuario o contraseña incorrectos')
+                    res.redirect('/usu_contra')
                 }
             })
         })
@@ -797,7 +797,7 @@ controller.loginAdmin = async (req, res) => {
             if (usuarioValido.length > 0) {
                 res.redirect('/menu_admin')
             }  else {
-                res.send('usuario o contraseña incorrectos')
+                res.redirect('/usu_contra_admin')
             }
         })
     })
@@ -815,6 +815,15 @@ controller.menuUser = (req, res) => {
 //MENU USUARIO
 controller.menuAdmin = (req, res) => {
     res.render('menu_admin')
+}
+
+//USUARIO Y CONTRASEÑA
+controller.usucontra = (req, res) => {
+    res.render('usu_contra')
+}
+
+controller.usucontraadmin = (req, res) => {
+    res.render('usu_contra_admin')
 }
 
 //index

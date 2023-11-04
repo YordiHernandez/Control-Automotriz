@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller Mecánico El Tridente - Error de Inicio de Sesión</title>
+<link rel="stylesheet" href="/estilos/stylelogin.css" />
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #000; /* Fondo negro */
+    margin: 0;
+    padding: 20px;
+    color: #d9d9d9; /* Texto en escala de grises */
+  }
+
+  .container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #1c1c1c; /* Gris muy oscuro para el contenedor */
+    border: 1px solid #333; /* Borde un poco más claro que el contenedor */
+    box-shadow: 0px 0px 10px rgba(255,255,255,0.1); /* Sombra blanca muy suave */
+    border-radius: 4px;
+    position: relative; /* Para posicionar el botón de regreso */
+  }
+
+  .header {
+    background-color: #333; /* Gris oscuro para la cabecera */
+    color: white;
+    padding: 10px;
+    text-align: center;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+  }
+
+  .message {
+    padding: 20px;
+    text-align: center;
+    color: #f2f2f2; /* Gris claro para el mensaje */
+  }
+
+  .footer {
+    text-align: center;
+    padding: 10px;
+    font-size: 0.8em;
+    color: #777; /* Gris para el texto del pie de página */
+  }
+
+  .back-button {
+    text-decoration: none;
+    padding: 10px 20px;
+    background-color: #555; /* Gris para el botón */
+    color: white;
+    border-radius: 4px;
+    position: absolute;
+    left: 20px; /* Posiciona a la izquierda */
+    bottom: 20px; /* Posiciona en la parte inferior */
+    font-size: 0.9em;
+  }
+
+  .back-button:hover {
+    background-color: #666; /* Gris un poco más claro al pasar el mouse */
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <img src="/images/logopro.png" alt="Logo de El Tridente Taller Automotriz">
+  <div class="header">
+    <h2>Taller Mecánico El Tridente</h2>
+  </div>
+  <div class="message">
+    <p>Usuario y/o contraseña incorrecto(s).</p>
+    <p>Por favor, intente de nuevo.</p>
+  </div>
+  <a href="/login" class="back-button">Regresar</a> <!-- Botón de regresar -->
+</div>
+
+</body>
+</html>

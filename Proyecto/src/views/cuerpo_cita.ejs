@@ -43,7 +43,7 @@
                                 </td>
                                 <% } else if (data[i].estado.trim() === 'En Reparacion') {%>
                                     <td>
-                                    <a href="/cuerpo_cita/procesopago/<%= data[i].pk_cuerpo %>/<%= data[i].idcoti %>/<%= data[i].cotizacion %>" class="btn btn-info" onclick="enviarNotificacion(event, this)">Proceder a pago</a>
+                                    <a href="/cuerpo_cita/procesopago/<%= data[i].pk_cuerpo %>/<%= data[i].idcoti %>/<%= data[i].cotizacion %>" class="btn btn-info">Proceder a pago</a>
                                    </td> 
                                 <% } %>
                         </tr>
@@ -56,20 +56,4 @@
 </div>
 </div>
 </div>
-<script>
-    function enviarNotificacion(event, element) {
-      event.preventDefault();
-      const href = element.getAttribute('href');
-      window.location.href = href;
-      setTimeout(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Correo enviado con éxito',
-          showConfirmButton: false,
-          timer: 1500
-        });
-      }, 100);
-    }
-  </script>
-
 <%- include ('partials/_footer') -%>

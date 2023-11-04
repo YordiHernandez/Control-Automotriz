@@ -152,5 +152,8 @@ router.get('/menu_user', AutomotrizControler.menuUser)
 //RUTA MENU ADMINISTRADOR
 router.get('/menu_admin', AutomotrizControler.menuAdmin)
 
+//RUTA PANTALLA DE INICIO DE SESIÓN
+router.get('/usu_contra', AutomotrizControler.usucontra)
+router.get('/usu_contra_admin', AutomotrizControler.usucontraadmin)
 
 module.exports = router;

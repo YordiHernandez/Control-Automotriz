@@ -1193,8 +1193,8 @@ controller.listPagosCliente = (req, res) => {
     const userId = req.session.userId;
     let codigoFiltro = req.query.codigo; // Obtiene el valor del parámetro 'codigo' de la consulta, si existe
     req.getConnection((err, conn) => {
-        let sqlQuery = `select pa.pk_pago, 
-        pa.fecha as fecha, 
+        let sqlQuery = `select pa.pk_pago,  
+        DATE_FORMAT(pa.fecha, '%Y-%m-%d %H:%i:%s') as fecha,
         pa.tipo as tipo, 
         co.CODIGO as cotizacion, 
         ci.presupuesto as cantidad,
@@ -1237,6 +1237,7 @@ controller.listCuerpoCita = (req, res) => {
             cc.fk_cita AS cita,
             cc.fk_servicio AS fk_servicio,
             se.descripcion as servicio,
+            co.pk_cotizacion as idcoti,
             co.CODIGO as cotizacion,
             cc.detalle as detalle,
             cc.estado as estado,
@@ -1309,7 +1310,7 @@ controller.saveCuerpoCita = (req, res) => {
     })
     console.log('Datos a enviar: ', req.body)
 }
-controller.cuerpoCitaRepacion = (req, res) => {  
+controller.cuerpoCitaRepacion =  (req, res) => {  
     const {pk_cuerpo} = req.params
 
     req.getConnection((err, conn)=>{
@@ -1318,14 +1319,36 @@ controller.cuerpoCitaRepacion = (req, res) => {
         })
     }) 
 }
-controller.cuerpoCitaPago = (req, res) => {  
+controller.cuerpoCitaPago = async (req, res) => {  
     const {pk_cuerpo} = req.params
+    const {pk_cotizacion} = req.params
+    const {CODIGO} = req.params
 
+    const qcorreo = await consultarCorreo(req);
     req.getConnection((err, conn)=>{
         conn.query(`update cuerpo_cita set estado = 'Proceder a Pago' where pk_cuerpo = ${pk_cuerpo};`, (err, cuerpo_cita) => { //
             res.redirect('/cuerpo_cita')
         })
     }) 
+    const {transporter} = require('../app')
+    await transporter.sendMail( {
+        from: 'tallereltridente@gmail.com',
+        to: qcorreo[0].correo,
+        subject: 'Su Cotizacion a sido aceptada',
+        text: `Gracias por elegir nuestro servicio, su cotizacion ->${CODIGO}<- a sido finalizada, puede llegar a recoger su carro y proceder a pagar`
+    }); //si quiero enviar variables sera en html en vez de text
+    async function consultarCorreo(req) {
+        return new Promise((resolve, reject) => {
+            req.getConnection((err, conn) => {
+                    conn.query(`select cl.correo FROM cotizacion cz 
+                    INNER JOIN vehiculo ve ON ve.pk_vehiculo = cz.fk_vehiculo 
+                    INNER JOIN cliente cl ON cl.pk_cliente = ve.fk_cliente
+                    WHERE cz.pk_cotizacion = ${pk_cotizacion};`, (err, correo) => {
+                            resolve(correo);
+                    });    
+            });
+        });
+    }
 }
 
 
@@ -1493,26 +1516,57 @@ controller.listBitacoraadmin = (req, res) => {
 };
 
 //Pagos
-controller.listpagos = async (req, res) => {    //linea siempre, solo crearle nomre metodo
-    
-    const qcliente = await consultarPago(req)
-    const ucliente = await consultarUPago(req)
+controller.listpagos = async (req, res) => {    //linea siempre, solo crearle nomre metod
+    let codigoFiltro = req.query.codigo; // Obtiene el valor del parámetro 'codigo' de la consulta, si existe
+    const qcotizacion = await consultarCotizacion(req)
 
-    res.render("crear_usuario_cliente", {
-        data: ucliente,
-        qcliente
+    req.getConnection((err, conn) => {
+        let sqlQuery = `select pa.pk_pago,  
+        DATE_FORMAT(pa.fecha, '%Y-%m-%d %H:%i:%s') as fecha,
+        pa.tipo as tipo, 
+        co.CODIGO as cotizacion, 
+        ci.presupuesto as cantidad,
+        cl.nombre as cliente
+        FROM pago pa 
+        INNER JOIN cita ci ON ci.pk_cita = pa.fk_cita
+        INNER JOIN cotizacion co ON co.pk_cotizacion = ci.fk_cotizacion
+        INNER JOIN vehiculo ve ON ve.pk_vehiculo = co.fk_vehiculo
+        INNER JOIN cliente cl ON cl.pk_cliente = ve.fk_cliente
+        INNER JOIN cuerpo_cita cc ON cc.fk_cita = ci.pk_cita`;
+        
+        // Si se proporcionó un código, agregue una cláusula WHERE adicional para filtrar por ese código
+        if (codigoFiltro) {
+            sqlQuery += ` AND cz.CODIGO LIKE ?`;
+            codigoFiltro = `%${codigoFiltro}%`;
+        }
+
+        conn.query(sqlQuery, codigoFiltro ? [codigoFiltro] : [], (err, cita) => {
+            if (err) {
+                res.json(err);
+                return;
+            }
+            console.log(cita);
+            res.render('pago_admin', {  //renderiza en archivo vista cita
+                data: cita,
+                busqueda: req.query.codigo || '',  // Mantén el valor de búsqueda para mostrar en el input
+                qcotizacion 
+            });
+        });
     });
-
-    async function consultarUcliente(req) {
+    
+    async function consultarCotizacion(req) {
         return new Promise((resolve, reject) => {
             req.getConnection((err, conn) => {
                 conn.query(
-                    `Select uc.pk_ucliente as id_usuario,cl.nombre as cliente,uc.usuario_cliente as usuario,uc.clave_cliente as clave from usuarios_cliente uc inner join cliente cl on uc.fk_cliente = cl.pk_cliente;`,
-                    (err, ucliente) => {
+                    `SELECT co.CODIGO as cotizacion, ci.pk_cita as cita, cc.pk_cuerpo as cuerpo FROM cita ci 
+                    INNER JOIN cotizacion co ON co.pk_cotizacion = ci.fk_cotizacion
+                    INNER JOIN cuerpo_cita cc ON cc.fk_cita = ci.pk_cita
+                    WHERE cc.estado = "Proceder a Pago"`,
+                    (err, qcotizacion) => {
                         if (err) {
                             reject(err);
                         } else {
-                            resolve(ucliente);
+                            resolve(qcotizacion);
                         }
                     }
                 );
@@ -1520,31 +1574,16 @@ controller.listpagos = async (req, res) => {    //linea siempre, solo crearle no
         });
     }
 
-    async function consultarCliente(req) {
-        return new Promise((resolve, reject) => {
-            req.getConnection((err, conn) => {
-                conn.query(
-                    `SELECT * FROM cliente`,
-                    (err, qcliente) => {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(qcliente);
-                        }
-                    }
-                );
-            });
-        });
-    }
+
 }
 
-controller.saveUserCliente = (req, res) => {
+controller.savePagos = (req, res) => {
 
     let data = req.body
     
     req.getConnection((err, conn)=>{
-        conn.query(`insert into usuarios_cliente(fk_cliente, usuario_cliente, clave_cliente) VALUES (${data.cliente},'${data.usuario}','${data.pass}');`, (err, usuario_cliente) => { //tipoV hace referencia al resultado del query
-            res.redirect('/usuario_cliente')
+        conn.query(`insert into pago(fk_cita, tipo) VALUES (${data.cotizacion},'${data.tipo}');`, (err, pago) => { //tipoV hace referencia al resultado del query
+            res.redirect('/pago_admin')
         })
     })
 }

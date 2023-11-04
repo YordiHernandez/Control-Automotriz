@@ -41,7 +41,7 @@
                                 </td>
                                 <% } else if (data[i].estado.trim() === 'En Reparacion') {%>
                                     <td>
-                                    <a href="/cuerpo_cita/procesopago/<%= data[i].pk_cuerpo %>" class="btn btn-info">Proceder a pago</a>
+                                    <a href="/cuerpo_cita/procesopago/<%= data[i].pk_cuerpo %>/<%= data[i].idcoti %>/<%= data[i].cotizacion %>" class="btn btn-info">Proceder a pago</a>
                                    </td> 
                                 <% } %>
                         </tr>

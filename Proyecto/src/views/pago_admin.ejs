@@ -24,11 +24,7 @@
                             <td><%= (data[i].cotizacion) %></td>
                             <td><%= (data[i].fecha) %></td>
                             <td><%= (data[i].tipo) %></td>
-                            <td><%= (data[i].cantidad) %></td>
-                            <td>
-                                <a href="usuario_cliente/delete/<%= data[i].id_usuario %>" class="btn btn-danger">Borrar</a>
-                                <a href="usuario_cliente/update/<%= data[i].id_usuario %>" class="btn btn-info" style="display: none;">Modificar</a>
-                            </td>
+                            <td>Q. <%= (data[i].cantidad) %></td>
                         </tr>
                 <% } %>
                 <% } %>
@@ -39,13 +35,13 @@
             <div class="card bg-light ">
                 <div class="card-body">
                     <div class="card-header">Ingreso de Datos</div>
-                    <form action="usuario_cliente/add" method="post" style="padding: 5px;">
+                    <form action="pago_admin/add" method="post" style="padding: 5px;">
                         <div class="form-group">
                             <!--input type="text" name="cliente" placeholder="Seleccione Cliente" class="form-control" style="margin-bottom: 5px;"/-->
                             <label for="cliente">Seleccione Cotizacion:</label>
                     <select name="cotizacion" id="cotizacion" class="form-control" style="margin-bottom: 5px;">
-                        <% for (const opcion of qcliente) { %>
-                            <option value="<%= opcion.pk_cliente %>"><%= opcion.nombre %></option>
+                        <% for (const opcion of qcotizacion) { %>
+                            <option value="<%= opcion.cita %>"><%= opcion.cotizacion %></option>
                         <% } %>
                     </select>
                         </div>

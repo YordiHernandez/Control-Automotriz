@@ -109,7 +109,7 @@ router.get('/cuerpo_cita', AutomotrizControler.listCuerpoCita)
 router.get('/cuerpo_cita/:pk_cita', AutomotrizControler.preSaveCuerpoCita)
 router.post('/cuerpo_cita/add', upload.single('archivo'), AutomotrizControler.saveCuerpoCita)
 router.get('/cuerpo_cita/reparacion/:pk_cuerpo', AutomotrizControler.cuerpoCitaRepacion)
-router.get('/cuerpo_cita/procesopago/:pk_cuerpo', AutomotrizControler.cuerpoCitaPago)
+router.get('/cuerpo_cita/procesopago/:pk_cuerpo/:pk_cotizacion/:CODIGO', AutomotrizControler.cuerpoCitaPago)
 
 //CLIENTE
 router.get('/cuerpo_cita_cliente', AutomotrizControler.listCuerpoCitaCliente)
@@ -123,6 +123,10 @@ router.get('/cita_cliente/denegar/:pk_cita', AutomotrizControler.denegarCita)
 router.get('/citas_cliente_noti', AutomotrizControler.listCitasClienteNoti)
 router.get('/cita_cliente_noti/aceptar/:pk_cita', AutomotrizControler.aceptarCitaNoti)
 router.get('/cita_cliente_noti/denegar/:pk_cita', AutomotrizControler.denegarCitaNoti)
+
+//RUTA PAGO ADMIN
+router.get('/pago_admin', AutomotrizControler.listpagos)
+router.post('/pago_admin/add', AutomotrizControler.savePagos)
 
 //RUTA DE PAGOS CLIENTE
 router.get('/pago_user', AutomotrizControler.listPagosCliente)

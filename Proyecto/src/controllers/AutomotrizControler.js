@@ -1209,7 +1209,7 @@ controller.listPagosCliente = (req, res) => {
         
         // Si se proporcionó un código, agregue una cláusula WHERE adicional para filtrar por ese código
         if (codigoFiltro) {
-            sqlQuery += ` AND cz.CODIGO LIKE ?`;
+            sqlQuery += ` AND co.CODIGO LIKE ?`;
             codigoFiltro = `%${codigoFiltro}%`;
         }
 

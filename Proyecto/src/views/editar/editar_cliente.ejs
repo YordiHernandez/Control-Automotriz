@@ -5,7 +5,7 @@
         <div class="col-md-5">
             <div class="card">
                 <div class="card">
-                    <form action="/cliente/update/<%= (data.pk_cliente) %>" method="post" style="padding: 5px;">
+                    <form id="formulariocliente" action="/cliente/update/<%= (data.pk_cliente) %>" method="post" style="padding: 5px;">
                         <div class="form-group">
                             <input type="text" name="id" value="<%= (data.pk_cliente) %>" class="form-control" style="margin-bottom: 5px; display:none;"/>
                         </div>
@@ -25,7 +25,7 @@
                             <input type="text" name="direccion_cliente"  value="<%= (data.direccion_cliente) %>" placeholder="Inserte Direccion" class="form-control" style="margin-bottom: 5px;"/>
                         </div>
                         <button type="submit" class="btn btn-primary" style="margin-top: 5px;">
-                            Editar marca
+                            Editar Cliente
                         </button>
                 </div>
             </div>
@@ -35,5 +35,61 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.getElementById('formulariocliente').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevenir que el formulario se envíe inmediatamente
+        
+        // Verificar si hay campos vacíos antes de mostrar la alerta de confirmación
+        const inputs = this.querySelectorAll("input[type=text]");
+        const selects = this.querySelectorAll("select");
+        let allFilled = true;
+        for (let input of inputs) {
+            if (input.value.trim() === '') {
+                allFilled = false;
+                break;
+            }
+        }
+        for (let select of selects) {
+            if (select.value.trim() === '') {
+                allFilled = false;
+                break;
+            }
+        }
+
+        if (!allFilled) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Algo salio mal..',
+                text: 'Todos los campos deben estar llenos.',
+                confirmButtonColor: '#3085d6',
+            });
+            return; // Detener la ejecución si hay campos vacíos
+        }
+        
+        // Mostrar confirmación si todos los campos están llenos
+        Swal.fire({
+            title: '¿Estás seguro de que deseas ediar este cliente?',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                icon: 'success',
+                title: 'Datos Editados',
+                text: 'Datos Guardados con éxito',
+                confirmButtonColor: '#00D755'
+                }).then((result) => {
+                    this.submit(); // Enviar el formulario si el usuario confirma
+                });
+            }
+        });
+    });
+</script>
 
 <%- include ('../partials/_footer') -%>

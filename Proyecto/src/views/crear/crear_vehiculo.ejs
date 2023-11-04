@@ -2,7 +2,7 @@
 
 <div class="row mt-1">
     <div class="col-md-5" style="margin-left: 5px;">
-        <a href="/menu_user" class="btn btn-info">Regresar</a>
+        <a href="/vehiculo" class="btn btn-info">Regresar</a>
         <div class="card bg-light ">
             <div class="card-body">
                 <div class="card-header">Ingresar Vehiculo</div>
@@ -89,7 +89,14 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                this.submit(); // Enviar el formulario si el usuario confirma
+                Swal.fire({
+                icon: 'success',
+                title: 'Datos Ingresados',
+                text: 'Datos Ingresados con éxito',
+                confirmButtonColor: '#00D755'
+                }).then((result) => {
+                    this.submit(); // Enviar el formulario si el usuario confirma
+                });
             }
         });
     });

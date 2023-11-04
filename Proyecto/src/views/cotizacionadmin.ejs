@@ -1,68 +1,85 @@
 <%- include ('partials/_header') -%>
-<div class="card border-light mb-4" style="max-width: 100%;">
-<div class="card-header">Solicitudes de Revision</div>
-<div class="card-body">
-<div class="container">
-    <a href="/menu_admin" class="btn btn-info">Regresar</a>
-    <hr>
-    <div class="row mt-1">
-        <div class="col-md-12">
-            <form action="/cotizacionadmin" method="get">
-                <input type="text" name="codigo" placeholder="Buscar por código" value="<%= busqueda %>">
-                <button type="submit" class="btn btn-outline-info">Buscar</button>
-                <a href="/cotizacionadmin" class="btn btn-outline-warning">Restablecer</a>
-            </form>
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>N.</th>
-                        <th>Codigo</th>
-                        <th>Placa Vehiculo</th>
-                        <th>Estado</th>
-                        <th>Descripcion</th>
-                        <th>Fecha Solicitada</th>
-                        <th>Opciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <% if (data) { %>
-                    <% for (var i = 0; i < data.length; i++) { %>
-                        <tr>
-                            <td><%= (i + 1)%></td>
-                            <td style="display: none;"><%= (data[i].pk_cotizacion) %></td>
-                            <td><%= (data[i].Codigo) %></td>
-                            <td><%= (data[i].placa) %></td>
-                            <td><%= (data[i].Estado) %></td>
-                            <td><%= (data[i].Descripcion) %></td>
-                            <td><%= (data[i].Fecha) %></td> 
-                            <% if (data[i].Estado.trim() === 'En Espera') { %>
-                            <td>
-                                <a href="cotizacionadmin/aceptar/<%= data[i].pk_cotizacion %>" class="btn btn-info">Aceptar</a>
-                                -
-                                <a href="cotizacionadmin/denegar/<%= data[i].pk_cotizacion %>" class="btn btn-danger">Denegar</a>
-                            </td>
-                            <% } else if (data[i].Estado.trim() === 'Aceptada'){ %>
-                                <td>
-                                    <a href="/cotizacionadmin/correoaceptado/<%= data[i].pk_cotizacion %>/<%= data[i].Codigo %>" class="btn btn-success">Enviar Notificación</a>
-                                  </td>
-                            <% } else if (data[i].Estado.trim() === 'Denegada')  { %>
-                                <td>
-                                    <a href="/cotizacionadmin/correodenegado/<%= data[i].pk_cotizacion %>/<%= data[i].Codigo %>" class="btn btn-warning">Enviar Notificación</a>
-                                </td>
-                            <% } else { %>
-                                <td>
-                                    <p>Revisar Citas</p>
-                                </td>
-                            <% } %>
-                        </tr>
-                <% } %>
-                <% } %>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div>
-</div>
-<%- include ('partials/_footer') -%>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<div class="card border-light mb-4" style="max-width: 100%;">
+  <div class="card-header">Solicitudes de Revision</div>
+  <div class="card-body">
+    <div class="container">
+      <a href="/menu_admin" class="btn btn-info">Regresar</a>
+      <hr>
+      <div class="row mt-1">
+        <div class="col-md-12">
+          <form action="/cotizacionadmin" method="get">
+            <input type="text" name="codigo" placeholder="Buscar por código" value="<%= busqueda %>">
+            <button type="submit" class="btn btn-outline-info">Buscar</button>
+            <a href="/cotizacionadmin" class="btn btn-outline-warning">Restablecer</a>
+          </form>
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>N.</th>
+                <th>Codigo</th>
+                <th>Placa Vehiculo</th>
+                <th>Estado</th>
+                <th>Descripcion</th>
+                <th>Fecha Solicitada</th>
+                <th>Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (data) { %>
+                <% for (var i = 0; i < data.length; i++) { %>
+                  <tr>
+                    <td><%= (i + 1)%></td>
+                    <td><%= (data[i].Codigo) %></td>
+                    <td><%= (data[i].placa) %></td>
+                    <td><%= (data[i].Estado) %></td>
+                    <td><%= (data[i].Descripcion) %></td>
+                    <td><%= (data[i].Fecha) %></td> 
+                    <% if (data[i].Estado.trim() === 'En Espera') { %>
+                      <td>
+                        <a href="cotizacionadmin/aceptar/<%= data[i].pk_cotizacion %>" class="btn btn-info">Aceptar</a>
+                        -
+                        <a href="cotizacionadmin/denegar/<%= data[i].pk_cotizacion %>" class="btn btn-danger">Denegar</a>
+                      </td>
+                    <% } else if (data[i].Estado.trim() === 'Aceptada'){ %>
+                      <td>
+                        <a href="/cotizacionadmin/correoaceptado/<%= data[i].pk_cotizacion %>/<%= data[i].Codigo %>" class="btn btn-success" onclick="enviarNotificacion(event, this)">Enviar Notificación</a>
+                      </td>
+                    <% } else if (data[i].Estado.trim() === 'Denegada') { %>
+                      <td>
+                        <a href="/cotizacionadmin/correodenegado/<%= data[i].pk_cotizacion %>/<%= data[i].Codigo %>" class="btn btn-warning" onclick="enviarNotificacion(event, this)">Enviar Notificación</a>
+                      </td>
+                    <% } else { %>
+                      <td>
+                        <p>Revisar Citas</p>
+                      </td>
+                    <% } %>
+                  </tr>
+                <% } %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function enviarNotificacion(event, element) {
+    event.preventDefault();
+    const href = element.getAttribute('href');
+    window.location.href = href;
+    setTimeout(() => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Correo enviado con éxito',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }, 100);
+  }
+</script>
+
+<%- include ('partials/_footer') -%>
